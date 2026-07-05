@@ -1,0 +1,11 @@
+D:\GAFABUSA\PROJECTS\MULTICHOICE RECON\PROJECT\portal\MultichoiceReconPortal\ClassLibrary\bin\Debug\ClassLibrary.dll
+D:\GAFABUSA\PROJECTS\MULTICHOICE RECON\PROJECT\portal\MultichoiceReconPortal\ClassLibrary\bin\Debug\ClassLibrary.pdb
+D:\GAFABUSA\PROJECTS\MULTICHOICE RECON\PROJECT\portal\MultichoiceReconPortal\ClassLibrary\bin\Debug\Microsoft.Practices.EnterpriseLibrary.Common.dll
+D:\GAFABUSA\PROJECTS\MULTICHOICE RECON\PROJECT\portal\MultichoiceReconPortal\ClassLibrary\bin\Debug\Microsoft.Practices.EnterpriseLibrary.Data.dll
+D:\GAFABUSA\PROJECTS\MULTICHOICE RECON\PROJECT\portal\MultichoiceReconPortal\ClassLibrary\bin\Debug\Microsoft.Practices.EnterpriseLibrary.Common.xml
+D:\GAFABUSA\PROJECTS\MULTICHOICE RECON\PROJECT\portal\MultichoiceReconPortal\ClassLibrary\bin\Debug\Microsoft.Practices.EnterpriseLibrary.Data.xml
+D:\GAFABUSA\PROJECTS\MULTICHOICE RECON\PROJECT\portal\MultichoiceReconPortal\ClassLibrary\obj\Debug\ClassLibrary.csproj.AssemblyReference.cache
+D:\GAFABUSA\PROJECTS\MULTICHOICE RECON\PROJECT\portal\MultichoiceReconPortal\ClassLibrary\obj\Debug\ClassLibrary.csproj.CoreCompileInputs.cache
+D:\GAFABUSA\PROJECTS\MULTICHOICE RECON\PROJECT\portal\MultichoiceReconPortal\ClassLibrary\obj\Debug\ClassLib.939BCD28.Up2Date
+D:\GAFABUSA\PROJECTS\MULTICHOICE RECON\PROJECT\portal\MultichoiceReconPortal\ClassLibrary\obj\Debug\ClassLibrary.dll
+D:\GAFABUSA\PROJECTS\MULTICHOICE RECON\PROJECT\portal\MultichoiceReconPortal\ClassLibrary\obj\Debug\ClassLibrary.pdb
