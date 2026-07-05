@@ -23,11 +23,11 @@
             align-items: center;
             justify-content: center;
         }
-        .login-wrapper { width: 100%; max-width: 760px; padding: 24px; }
+        .login-wrapper { width: 100%; max-width: 900px; padding: 24px; }
         .login-card {
             background: #fff;
             border-radius: 20px;
-            padding: 60px 80px 52px;
+            padding: 64px 96px 52px;
             box-shadow: 0 30px 60px -15px rgba(0,0,0,.45);
             width: 100%;
         }
@@ -40,7 +40,7 @@
         .login-sub { text-align: center; color: #7a869a; font-size: 1rem; margin-bottom: 30px; }
         .login-card .form-label { font-weight: 600; color: #33415c; font-size: .95rem; margin-bottom: 6px; }
         .login-card .form-control {
-            padding: 1rem 1.2rem; border-radius: 12px; border: 1px solid #d7dde8; font-size: 1.1rem; width: 100%;
+            padding: 1.1rem 1.3rem; border-radius: 12px; border: 1px solid #d7dde8; font-size: 1.15rem; width: 100%; min-height: 60px;
         }
         .login-card .form-control:focus {
             border-color: var(--mc-blue); box-shadow: 0 0 0 .2rem rgba(0,51,161,.15);

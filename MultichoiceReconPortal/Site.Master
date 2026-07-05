@@ -75,6 +75,18 @@
         .mc-stat .sub { font-size: .78rem; opacity: .85; }
         .btn-mc { background: var(--mc-blue); border: none; color: #fff; font-weight: 600; border-radius: 9px; }
         .btn-mc:hover { background: var(--mc-blue-dark); color: #fff; }
+
+        /* ---- shared large form style (login-sized fields everywhere) ---- */
+        .mc-formcard { max-width: 900px; margin: 0 auto; }
+        .mc-form .form-label { font-weight: 600; color: #33415c; font-size: 1rem; margin-bottom: 6px; }
+        .mc-form .form-control, .mc-form .form-select {
+            padding: 1.1rem 1.3rem; border-radius: 12px; border: 1px solid #d7dde8; font-size: 1.15rem; width: 100%; min-height: 60px;
+        }
+        .mc-form .form-control:focus, .mc-form .form-select:focus {
+            border-color: var(--mc-blue); box-shadow: 0 0 0 .2rem rgba(0,51,161,.15);
+        }
+        .mc-form .mb-3 { margin-bottom: 1.15rem !important; }
+        .mc-form .login-btn, .mc-form .btn-lg { padding: .9rem; border-radius: 12px; font-size: 1.1rem; font-weight: 600; }
         .table thead th { color: var(--mc-muted); text-transform: uppercase; font-size: .74rem; letter-spacing: .4px; border-bottom-width: 1px; }
         footer.mc-foot { color: var(--mc-muted); font-size: .78rem; padding: 16px 30px; }
 

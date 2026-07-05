@@ -48,14 +48,14 @@ namespace MultichoiceReconPortal
 
             if (!fuStatement.HasFile)
             {
-                ShowMessage("Please choose a statement file to upload.", "alert-danger");
+                ShowModalError("Please choose a statement file to upload.");
                 return;
             }
 
             string channel = ddlChannel.SelectedValue;
             if (string.IsNullOrEmpty(channel))
             {
-                ShowMessage("Please select a channel.", "alert-danger");
+                ShowModalError("Please select a channel.");
                 return;
             }
 
@@ -66,14 +66,18 @@ namespace MultichoiceReconPortal
             }
             catch (Exception ex)
             {
-                ShowMessage("Upload failed: " + ex.Message, "alert-danger");
+                ShowModalError("Upload failed: " + ex.Message);
                 return;
             }
 
-            ShowMessage(result.Message, result.Success ? "alert-success" : "alert-danger");
             if (result.Success)
             {
+                ShowPageMessage(result.Message, "alert-success");
                 BindRecent();
+            }
+            else
+            {
+                ShowModalError(result.Message);
             }
         }
 
@@ -87,11 +91,19 @@ namespace MultichoiceReconPortal
             return "bg-secondary";
         }
 
-        private void ShowMessage(string message, string cssClass)
+        private void ShowPageMessage(string message, string cssClass)
         {
             lblMsg.Text = message;
             pnlMsg.CssClass = "alert py-2 " + cssClass;
             pnlMsg.Visible = true;
+        }
+
+        private void ShowModalError(string message)
+        {
+            lblModalMsg.Text = message;
+            pnlModalMsg.Visible = true;
+            ClientScript.RegisterStartupScript(GetType(), "reopenUpload",
+                "var m=new bootstrap.Modal(document.getElementById('uploadModal'));m.show();", true);
         }
     }
 }

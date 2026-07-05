@@ -19,8 +19,6 @@ namespace MultichoiceReconPortal
                 Response.Redirect("~/Default.aspx");
                 return;
             }
-
-            // Admin-only page.
             if (!user.IsAdmin)
             {
                 Response.Redirect("~/Dashboard.aspx");
@@ -57,13 +55,12 @@ namespace MultichoiceReconPortal
 
             if (string.IsNullOrEmpty(fullName) || string.IsNullOrEmpty(email))
             {
-                ShowMessage("Please enter the user's full name and email.", "alert-danger");
+                ShowModalError("Please enter the user's full name and email.");
                 return;
             }
-
             if (!int.TryParse(ddlRole.SelectedValue, out roleId))
             {
-                ShowMessage("Please choose a role.", "alert-danger");
+                ShowModalError("Please choose a role.");
                 return;
             }
 
@@ -76,25 +73,24 @@ namespace MultichoiceReconPortal
             }
             catch (Exception)
             {
-                ShowMessage("We could not create the user right now. Please try again.", "alert-danger");
+                ShowModalError("We could not create the user right now. Please try again.");
                 return;
             }
 
             if (newId == -1)
             {
-                ShowMessage("A user with that email already exists.", "alert-danger");
+                ShowModalError("A user with that email already exists.");
                 return;
             }
 
-            // Email the temporary password. If mail fails, still report the account was created.
             try
             {
                 bll.SendCredentialsEmail(email, fullName, tempPassword, false);
-                ShowMessage("User created. A temporary password has been emailed to " + email + ".", "alert-success");
+                ShowPageMessage("User created. A temporary password has been emailed to " + email + ".", "alert-success");
             }
             catch (Exception)
             {
-                ShowMessage("User created, but the email could not be sent. Temporary password: " + tempPassword, "alert-warning");
+                ShowPageMessage("User created, but the email could not be sent. Temporary password: " + tempPassword, "alert-warning");
             }
 
             txtFullName.Text = "";
@@ -112,8 +108,6 @@ namespace MultichoiceReconPortal
 
             DataKey key = gvUsers.DataKeys[index];
             int userId = Convert.ToInt32(key.Values["UserId"]);
-            string email = Convert.ToString(key.Values["Email"]);
-            string fullName = Convert.ToString(key.Values["FullName"]);
             bool isActive = Convert.ToBoolean(key.Values["IsActive"]);
 
             if (e.CommandName == "ToggleActive")
@@ -121,22 +115,31 @@ namespace MultichoiceReconPortal
                 try
                 {
                     bll.SetUserActive(userId, !isActive);
-                    ShowMessage("User " + (isActive ? "disabled" : "enabled") + ".", "alert-success");
+                    ShowPageMessage("User " + (isActive ? "disabled" : "enabled") + ".", "alert-success");
                 }
                 catch (Exception)
                 {
-                    ShowMessage("We could not update the user right now. Please try again.", "alert-danger");
+                    ShowPageMessage("We could not update the user right now. Please try again.", "alert-danger");
                 }
             }
 
             BindUsers();
         }
 
-        private void ShowMessage(string message, string cssClass)
+        private void ShowPageMessage(string message, string cssClass)
         {
             lblMsg.Text = message;
             pnlMsg.CssClass = "alert py-2 " + cssClass;
             pnlMsg.Visible = true;
+        }
+
+        private void ShowModalError(string message)
+        {
+            lblModalMsg.Text = message;
+            pnlModalMsg.Visible = true;
+            // Re-open the modal after the postback so the user sees the error.
+            ClientScript.RegisterStartupScript(GetType(), "reopenAddUser",
+                "var m=new bootstrap.Modal(document.getElementById('addUserModal'));m.show();", true);
         }
     }
 }

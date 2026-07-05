@@ -17,6 +17,18 @@ namespace MultichoiceReconPortal
         /// <summary>lblMsg control.</summary>
         protected global::System.Web.UI.WebControls.Label lblMsg;
 
+        /// <summary>gvRecent control.</summary>
+        protected global::System.Web.UI.WebControls.GridView gvRecent;
+
+        /// <summary>pnlForm control.</summary>
+        protected global::System.Web.UI.WebControls.Panel pnlForm;
+
+        /// <summary>pnlModalMsg control.</summary>
+        protected global::System.Web.UI.WebControls.Panel pnlModalMsg;
+
+        /// <summary>lblModalMsg control.</summary>
+        protected global::System.Web.UI.WebControls.Label lblModalMsg;
+
         /// <summary>ddlChannel control.</summary>
         protected global::System.Web.UI.WebControls.DropDownList ddlChannel;
 
@@ -25,8 +37,5 @@ namespace MultichoiceReconPortal
 
         /// <summary>btnUpload control.</summary>
         protected global::System.Web.UI.WebControls.Button btnUpload;
-
-        /// <summary>gvRecent control.</summary>
-        protected global::System.Web.UI.WebControls.GridView gvRecent;
     }
 }
