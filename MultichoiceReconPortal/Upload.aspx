@@ -70,7 +70,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline-secondary btn-lg" data-bs-dismiss="modal">Cancel</button>
-                        <asp:Button ID="btnUpload" runat="server" CssClass="btn btn-mc btn-lg" Text="Upload &amp; Queue" OnClick="btnUpload_Click" />
+                        <asp:Button ID="btnUpload" runat="server" CssClass="btn btn-mc btn-lg" Text="Upload statement" OnClick="btnUpload_Click" />
                     </div>
                 </asp:Panel>
             </div>
