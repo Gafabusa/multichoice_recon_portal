@@ -40,8 +40,9 @@ namespace MultichoiceReconPortal
             if (!DateTime.TryParse(txtFrom.Text, out from)) from = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
             if (!DateTime.TryParse(txtTo.Text, out to)) to = DateTime.Today;
 
-            // KPIs
-            long total = 0, recon = 0, failed = 0, pending = 0;
+            // KPIs. A transaction is either RECONCILED (Reconciled = 1) or FAILED -
+            // there is no pending bucket, so failed = total - reconciled.
+            long total = 0, recon = 0, failed = 0;
             decimal totalAmt = 0, reconAmt = 0, failedAmt = 0;
             DataTable stats = bll.GetDashboardStats(from, to);
             if (stats.Rows.Count > 0)
@@ -49,17 +50,15 @@ namespace MultichoiceReconPortal
                 DataRow r = stats.Rows[0];
                 total = ToLong(r["TotalTxns"]);
                 recon = ToLong(r["ReconciledCount"]);
-                failed = ToLong(r["FailedCount"]);
-                pending = ToLong(r["PendingCount"]);
+                failed = total - recon;
                 totalAmt = ToDec(r["TotalAmount"]);
                 reconAmt = ToDec(r["ReconciledAmount"]);
-                failedAmt = ToDec(r["FailedAmount"]);
+                failedAmt = totalAmt - reconAmt;
             }
 
             litTotal.Text = total.ToString("N0");
             litRecon.Text = recon.ToString("N0");
             litFailed.Text = failed.ToString("N0");
-            litPending.Text = pending.ToString("N0");
             litRate.Text = (total > 0 ? (recon * 100m / total) : 0m).ToString("0.#") + "%";
 
             // Only admins see the money figures; uploaders see counts only.
@@ -69,35 +68,49 @@ namespace MultichoiceReconPortal
             litReconAmt.Text = isAdmin ? "UGX " + reconAmt.ToString("N0") : "";
             litFailedAmt.Text = isAdmin ? "UGX " + failedAmt.ToString("N0") : "";
 
-            // failure reasons grid
-            gvReasons.DataSource = bll.GetFailureReasons(from, to);
-            gvReasons.DataBind();
-
             // charts
             DataTable trend = bll.GetDailyTrend(from, to);
             DataTable channel = bll.GetByChannel(from, to);
 
-            string trendLabels = JsLabels(trend, "Day", true);
-            string trendRecon = JsNumbers(trend, "Reconciled");
-            string trendFailed = JsNumbers(trend, "Failed");
+            // Anchor the trend at zero on the left so the line always starts from 0
+            // and then rises/falls to each day's actual count (never a lone dot).
+            string trendLabels = "''," + JsLabels(trend, "Day", true);
+            string trendRecon = "0," + JsNumbers(trend, "Reconciled");
+            string trendFailed = "0," + JsNumbers(trend, "Failed");
             string chLabels = JsLabels(channel, "Bank", false);
             string chRecon = JsNumbers(channel, "Reconciled");
             string chFailed = JsNumbers(channel, "Failed");
 
+            // Charts share these greens; maintainAspectRatio:false lets the fixed-height
+            // .mc-chartbox control the height so everything fits without scrolling.
             StringBuilder s = new StringBuilder();
             s.Append("<script>(function(){");
             s.Append("if(typeof Chart==='undefined'){return;}");
-            s.Append("new Chart(document.getElementById('chartStatus'),{type:'doughnut',data:{labels:['Reconciled','Failed','Pending'],datasets:[{data:[")
-             .Append(recon).Append(',').Append(failed).Append(',').Append(pending)
-             .Append("],backgroundColor:['#1e9e64','#e2001a','#f0ad4e']}]},options:{plugins:{legend:{position:'bottom'}}}});");
+            s.Append("var base={responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}};");
+
+            s.Append("new Chart(document.getElementById('chartStatus'),{type:'doughnut',data:{labels:['Reconciled','Failed'],datasets:[{data:[")
+             .Append(recon).Append(',').Append(failed)
+             .Append("],backgroundColor:['#10664a','#e2001a']}]},options:base});");
+
+            // Daily trend: per-day counts for the selected range as a clean line
+            // (no area fill, no dots), rising or falling with the actual numbers.
+            // The y-axis is pinned to 0 and the series is anchored at 0 on the left.
             s.Append("new Chart(document.getElementById('chartTrend'),{type:'line',data:{labels:[").Append(trendLabels)
              .Append("],datasets:[{label:'Reconciled',data:[").Append(trendRecon)
-             .Append("],borderColor:'#1e9e64',backgroundColor:'rgba(30,158,100,.15)',tension:.3,fill:true},{label:'Failed',data:[").Append(trendFailed)
-             .Append("],borderColor:'#e2001a',backgroundColor:'rgba(226,0,26,.12)',tension:.3,fill:true}]},options:{plugins:{legend:{position:'bottom'}},scales:{y:{beginAtZero:true}}}});");
+             .Append("],borderColor:'#10664a',tension:.25,fill:false,borderWidth:3,pointRadius:0,pointHoverRadius:5},{label:'Failed',data:[").Append(trendFailed)
+             .Append("],borderColor:'#e2001a',tension:.25,fill:false,borderWidth:3,pointRadius:0,pointHoverRadius:5}]},")
+             .Append("options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},scales:{y:{beginAtZero:true,min:0,ticks:{precision:0}}}}});");
+
+            // By channel: grouped bars, side by side - a green Reconciled bar then a
+            // red Failed bar under each channel label, both growing from zero. A small
+            // categoryPercentage keeps the pair together and the bars slim (not huge)
+            // even when there is only one channel. NOT stacked - the datasets are not
+            // stacked on the x/y scales, so they sit next to each other.
             s.Append("new Chart(document.getElementById('chartChannel'),{type:'bar',data:{labels:[").Append(chLabels)
              .Append("],datasets:[{label:'Reconciled',data:[").Append(chRecon)
-             .Append("],backgroundColor:'#1e9e64'},{label:'Failed',data:[").Append(chFailed)
-             .Append("],backgroundColor:'#e2001a'}]},options:{plugins:{legend:{position:'bottom'}},scales:{y:{beginAtZero:true}}}});");
+             .Append("],backgroundColor:'#10664a',categoryPercentage:.35,barPercentage:.7},{label:'Failed',data:[").Append(chFailed)
+             .Append("],backgroundColor:'#e2001a',categoryPercentage:.35,barPercentage:.7}]},")
+             .Append("options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},scales:{x:{grid:{display:false},ticks:{autoSkip:false,maxRotation:0,minRotation:0}},y:{beginAtZero:true,min:0,ticks:{precision:0}}}}});");
             s.Append("})();</script>");
             litChartScript.Text = s.ToString();
         }

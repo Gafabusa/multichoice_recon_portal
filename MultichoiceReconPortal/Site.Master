@@ -10,19 +10,35 @@
     <link href="<%: ResolveUrl("~/Content/Site.css") %>" rel="stylesheet" />
     <asp:ContentPlaceHolder ID="HeadContent" runat="server" />
     <style>
+        /* Palette adopted from the Pegasus green theme (was blue). The variable
+           names are kept for continuity but now hold green values. */
         :root {
-            --mc-blue: #0033a1;
-            --mc-blue-dark: #001f66;
-            --mc-accent: #e2001a;
-            --mc-bg: #eef2f8;
+            --mc-blue: #10664a;        /* primary green */
+            --mc-blue-dark: #0b3d2e;   /* deep green */
+            --mc-accent: #e2001a;      /* red - Failed only */
+            --mc-mint: #7fe3bf;        /* light mint accent */
+            --mc-bg: #ffffff;
             --mc-ink: #1f2a44;
             --mc-muted: #7a869a;
             --mc-sidebar-w: 250px;
+            --mc-topbar-h: 58px;
         }
         body { background: var(--mc-bg); font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: var(--mc-ink); }
 
-        /* ---- layout ---- */
-        .mc-layout { display: flex; min-height: 100vh; align-items: stretch; }
+        /* ---- overall shell: full-width top bar, then sidebar + content ---- */
+        .mc-shell { display: flex; flex-direction: column; min-height: 100vh; }
+
+        .mc-topbar {
+            height: var(--mc-topbar-h); background: #fff; border-bottom: 1px solid #e3e9e5;
+            display: flex; align-items: center; justify-content: space-between; padding: 0 24px;
+            position: sticky; top: 0; z-index: 30; box-shadow: 0 2px 10px -7px rgba(0,0,0,.35);
+        }
+        .mc-topbar .who2 { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--mc-blue-dark); }
+        .mc-topbar .who2 .ico { font-size: 1.35rem; line-height: 1; }
+        .mc-topbar .who2 .nm { font-size: 1rem; letter-spacing: .3px; text-transform: uppercase; }
+        .mc-topbar .clock { color: var(--mc-muted); font-size: .9rem; font-weight: 600; }
+
+        .mc-layout { display: flex; flex: 1 1 auto; align-items: stretch; }
         .mc-content { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
 
         /* ---- sidebar ---- */
@@ -30,51 +46,59 @@
             width: var(--mc-sidebar-w); flex: 0 0 var(--mc-sidebar-w);
             background: linear-gradient(180deg, var(--mc-blue-dark) 0%, var(--mc-blue) 100%);
             color: #fff; display: flex; flex-direction: column;
-            position: sticky; top: 0; height: 100vh;
-            box-shadow: 2px 0 14px rgba(0,31,102,.25);
+            position: sticky; top: var(--mc-topbar-h); height: calc(100vh - var(--mc-topbar-h));
+            box-shadow: 2px 0 14px rgba(11,61,46,.25);
         }
-        .mc-brand { display: flex; align-items: center; gap: 12px; padding: 20px 20px 16px; border-bottom: 1px solid rgba(255,255,255,.12); }
-        .mc-brand img { height: 42px; border-radius: 8px; background: #fff; padding: 3px 5px; }
-        .mc-brand span { font-weight: 700; font-size: 1rem; line-height: 1.15; }
+        .mc-brand { display: flex; align-items: center; gap: 12px; padding: 18px 18px 16px; border-bottom: 1px solid rgba(255,255,255,.12); }
+        .mc-brand img { height: 62px; width: auto; border-radius: 10px; background: #fff; padding: 5px 7px; }
+        .mc-brand span { font-weight: 700; font-size: 1.02rem; line-height: 1.15; }
         .mc-nav { display: flex; flex-direction: column; padding: 14px 12px; gap: 4px; flex: 1 1 auto; }
         .mc-nav a {
             display: flex; align-items: center; gap: 12px;
-            color: rgba(255,255,255,.82); text-decoration: none;
+            color: rgba(255,255,255,.85); text-decoration: none;
             padding: 11px 14px; border-radius: 10px; font-weight: 500; font-size: .95rem;
             transition: background .15s, color .15s;
         }
-        .mc-nav a:hover { background: rgba(255,255,255,.12); color: #fff; }
+        .mc-nav a:hover { background: rgba(255,255,255,.13); color: #fff; }
         .mc-nav a.active { background: #fff; color: var(--mc-blue-dark); font-weight: 600; box-shadow: 0 6px 16px -8px rgba(0,0,0,.5); }
-        .mc-nav a .ico { width: 18px; height: 18px; opacity: .9; }
-        .mc-nav a.active .ico { opacity: 1; }
 
         .mc-side-user { padding: 14px 16px; border-top: 1px solid rgba(255,255,255,.12); }
         .mc-side-user .who { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
         .mc-avatar {
             display: inline-flex; align-items: center; justify-content: center;
             width: 38px; height: 38px; border-radius: 50%;
-            background: var(--mc-accent); color: #fff; font-size: .85rem; font-weight: 700; flex-shrink: 0;
+            background: var(--mc-mint); color: var(--mc-blue-dark); font-size: .85rem; font-weight: 700; flex-shrink: 0;
         }
         .mc-side-user .name { font-weight: 600; font-size: .9rem; line-height: 1.1; }
-        .mc-side-user .role { font-size: .76rem; color: rgba(255,255,255,.7); }
-        .mc-side-user .btn-signout { width: 100%; border: 1px solid rgba(255,255,255,.35); color: #fff; border-radius: 9px; font-size: .85rem; padding: 7px; background: transparent; }
-        .mc-side-user .btn-signout:hover { background: rgba(255,255,255,.14); color: #fff; }
+        .mc-side-user .role { font-size: .76rem; color: rgba(255,255,255,.75); }
+        .mc-side-user .btn-signout { width: 100%; border: 1px solid rgba(255,255,255,.4); color: #fff; border-radius: 9px; font-size: .85rem; padding: 7px; background: transparent; }
+        .mc-side-user .btn-signout:hover { background: rgba(255,255,255,.16); color: #fff; }
 
         /* ---- page shell ---- */
-        .mc-main { padding: 26px 30px 40px; flex: 1 1 auto; }
-        .mc-page-head { margin-bottom: 22px; }
+        .mc-main { padding: 22px 30px 36px; flex: 1 1 auto; }
+        .mc-page-head { margin-bottom: 20px; }
         .mc-page-head h1 { font-size: 1.5rem; font-weight: 700; color: var(--mc-blue-dark); margin: 0; }
         .mc-page-head p { color: var(--mc-muted); margin: 4px 0 0; font-size: .92rem; }
 
         /* ---- reusable cards / tables ---- */
-        .mc-card { background: #fff; border: none; border-radius: 14px; box-shadow: 0 8px 24px -12px rgba(31,42,68,.25); }
-        .mc-card .card-header { background: transparent; border-bottom: 1px solid #eef1f6; font-weight: 600; color: var(--mc-blue-dark); }
-        .mc-stat { border-radius: 14px; padding: 18px 20px; color: #fff; box-shadow: 0 10px 24px -12px rgba(0,0,0,.35); }
-        .mc-stat .label { font-size: .82rem; opacity: .9; }
-        .mc-stat .value { font-size: 1.7rem; font-weight: 700; line-height: 1.1; }
-        .mc-stat .sub { font-size: .78rem; opacity: .85; }
+        .mc-card { background: #fff; border: none; border-radius: 14px; box-shadow: 0 8px 24px -14px rgba(11,61,46,.28); }
+        .mc-card .card-header { background: transparent; border-bottom: 1px solid #eef1f0; font-weight: 600; color: var(--mc-blue-dark); }
+
+        /* ---- KPI cards: all identical light cards with green numbers ---- */
+        .mc-stat {
+            background: #fff; border: 1px solid #e3e9e5; border-radius: 14px; padding: 16px 20px;
+            box-shadow: 0 8px 22px -16px rgba(11,61,46,.3);
+        }
+        .mc-stat .label { font-size: .76rem; color: var(--mc-muted); text-transform: uppercase; letter-spacing: .5px; font-weight: 600; }
+        .mc-stat .value { font-size: 1.9rem; font-weight: 700; line-height: 1.15; color: var(--mc-blue-dark); }
+        .mc-stat .sub { font-size: .78rem; color: var(--mc-muted); }
+
         .btn-mc { background: var(--mc-blue); border: none; color: #fff; font-weight: 600; border-radius: 9px; }
         .btn-mc:hover { background: var(--mc-blue-dark); color: #fff; }
+
+        /* ---- chart sizing: keep charts short so everything fits, no scroll ---- */
+        .mc-chartbox { position: relative; width: 100%; height: 230px; }
+        .mc-chartbox.tall { height: 340px; }
 
         /* ---- shared form style (matches the login card) ---- */
         .mc-formcard { max-width: 520px; margin: 0 auto; }
@@ -83,7 +107,7 @@
             padding: .85rem 1.1rem; border-radius: 12px; border: 1px solid #d7dde8; font-size: 1.05rem; width: 100%; min-height: 54px;
         }
         .mc-form .form-control:focus, .mc-form .form-select:focus {
-            border-color: var(--mc-blue); box-shadow: 0 0 0 .2rem rgba(0,51,161,.15);
+            border-color: var(--mc-blue); box-shadow: 0 0 0 .2rem rgba(16,102,74,.15);
         }
         .mc-form .mb-3 { margin-bottom: 1.15rem !important; }
         .mc-form .login-btn, .mc-form .btn-lg { padding: .9rem; border-radius: 12px; font-size: 1.1rem; font-weight: 600; }
@@ -102,50 +126,63 @@
         }
         @media (max-width: 768px) {
             .mc-main { padding: 16px 14px 40px; }
+            .mc-topbar { padding: 0 14px; }
+            .mc-topbar .who2 .nm { font-size: .85rem; }
+            .mc-topbar .clock { font-size: .78rem; }
             .mc-page-head.d-flex { flex-direction: column; align-items: flex-start !important; gap: 12px; }
             .mc-page-head.d-flex .btn { width: 100%; }
         }
         @media (max-width: 576px) {
-            .mc-stat .value { font-size: 1.4rem; }
+            .mc-stat .value { font-size: 1.5rem; }
             .modal-dialog { margin: 10px; }
         }
     </style>
 </head>
 <body>
     <form runat="server">
-        <div class="mc-layout">
-            <aside class="mc-sidebar">
-                <div class="mc-brand">
-                    <img src="<%: ResolveUrl("~/Content/images/multichoicelogo.jpg") %>" alt="MultiChoice" />
-                    <span>Reconciliation<br />Portal</span>
+        <div class="mc-shell">
+            <header class="mc-topbar">
+                <div class="who2">
+                    <span class="ico">&#127963;</span>
+                    <span class="nm"><asp:Literal ID="litTopName" runat="server" /></span>
                 </div>
-                <nav class="mc-nav">
-                    <a href="<%: ResolveUrl("~/Dashboard.aspx") %>" data-page="dashboard">Dashboard</a>
-                    <a href="<%: ResolveUrl("~/Upload.aspx") %>" data-page="upload">Upload</a>
-                    <a href="<%: ResolveUrl("~/Search.aspx") %>" data-page="search">Search</a>
-                    <a href="<%: ResolveUrl("~/Reports.aspx") %>" data-page="reports">Reports</a>
-                    <a id="liUsers" runat="server" href="~/CreateUsers.aspx" data-page="createusers">Users</a>
-                    <a href="<%: ResolveUrl("~/ChangePassword.aspx") %>" data-page="changepassword">Change Password</a>
-                </nav>
-                <div class="mc-side-user">
-                    <div class="who">
-                        <span class="mc-avatar"><asp:Literal ID="litInitials" runat="server" /></span>
-                        <div>
-                            <div class="name"><asp:Literal ID="litUserName" runat="server" /></div>
-                            <div class="role"><asp:Literal ID="litRole" runat="server" /></div>
-                        </div>
-                    </div>
-                    <asp:LinkButton ID="btnLogout" runat="server" CssClass="btn btn-signout" OnClick="btnLogout_Click">Sign out</asp:LinkButton>
-                </div>
-            </aside>
+                <div class="clock">Date: <span id="mcClockVal"></span></div>
+            </header>
 
-            <div class="mc-content">
-                <main class="mc-main">
-                    <asp:ContentPlaceHolder ID="MainContent" runat="server" />
-                </main>
-                <footer class="mc-foot text-center">
-                    MultiChoice Reconciliation Portal &copy; <%: DateTime.Now.Year %>
-                </footer>
+            <div class="mc-layout">
+                <aside class="mc-sidebar">
+                    <div class="mc-brand">
+                        <img src="<%: ResolveUrl("~/Content/images/multichoicelogo.jpg") %>" alt="MultiChoice" />
+                        <span>Reconciliation<br />Portal</span>
+                    </div>
+                    <nav class="mc-nav">
+                        <a href="<%: ResolveUrl("~/Dashboard.aspx") %>" data-page="dashboard">Dashboard</a>
+                        <a href="<%: ResolveUrl("~/Upload.aspx") %>" data-page="upload">Upload</a>
+                        <a href="<%: ResolveUrl("~/Search.aspx") %>" data-page="search">Search</a>
+                        <a href="<%: ResolveUrl("~/Reports.aspx") %>" data-page="reports">Reports</a>
+                        <a id="liUsers" runat="server" href="~/CreateUsers.aspx" data-page="createusers">Users</a>
+                        <a href="<%: ResolveUrl("~/ChangePassword.aspx") %>" data-page="changepassword">Change Password</a>
+                    </nav>
+                    <div class="mc-side-user">
+                        <div class="who">
+                            <span class="mc-avatar"><asp:Literal ID="litInitials" runat="server" /></span>
+                            <div>
+                                <div class="name"><asp:Literal ID="litUserName" runat="server" /></div>
+                                <div class="role"><asp:Literal ID="litRole" runat="server" /></div>
+                            </div>
+                        </div>
+                        <asp:LinkButton ID="btnLogout" runat="server" CssClass="btn btn-signout" OnClick="btnLogout_Click">Sign out</asp:LinkButton>
+                    </div>
+                </aside>
+
+                <div class="mc-content">
+                    <main class="mc-main">
+                        <asp:ContentPlaceHolder ID="MainContent" runat="server" />
+                    </main>
+                    <footer class="mc-foot text-center">
+                        MultiChoice Reconciliation Portal &copy; <%: DateTime.Now.Year %>
+                    </footer>
+                </div>
             </div>
         </div>
 
@@ -158,6 +195,22 @@
                 for (var i = 0; i < links.length; i++) {
                     if (links[i].getAttribute('data-page') === seg) { links[i].classList.add('active'); }
                 }
+            })();
+
+            // Live date/time clock in the top bar (mirrors the sample dashboard).
+            (function () {
+                var el = document.getElementById('mcClockVal');
+                if (!el) return;
+                function pad(n) { return n < 10 ? '0' + n : n; }
+                function tick() {
+                    var d = new Date();
+                    var date = (d.getMonth() + 1) + '/' + d.getDate() + '/' + d.getFullYear();
+                    var h = d.getHours(), ap = h >= 12 ? 'PM' : 'AM';
+                    h = h % 12; if (h === 0) { h = 12; }
+                    el.textContent = date + ' ' + h + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds()) + ' ' + ap;
+                }
+                tick();
+                setInterval(tick, 1000);
             })();
 
             // Clear all inputs/selects within a container.

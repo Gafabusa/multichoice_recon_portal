@@ -14,6 +14,9 @@ namespace MultichoiceReconPortal
         /// <summary>HeadContent placeholder.</summary>
         protected global::System.Web.UI.WebControls.ContentPlaceHolder HeadContent;
 
+        /// <summary>litTopName control (name shown in the top bar).</summary>
+        protected global::System.Web.UI.WebControls.Literal litTopName;
+
         /// <summary>liUsers control (admin-only menu item).</summary>
         protected global::System.Web.UI.HtmlControls.HtmlAnchor liUsers;
 

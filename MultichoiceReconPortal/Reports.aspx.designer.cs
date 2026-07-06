@@ -32,9 +32,6 @@ namespace MultichoiceReconPortal
         /// <summary>btnExportFailed control.</summary>
         protected global::System.Web.UI.WebControls.Button btnExportFailed;
 
-        /// <summary>btnExportAll control.</summary>
-        protected global::System.Web.UI.WebControls.Button btnExportAll;
-
         /// <summary>litTotal control.</summary>
         protected global::System.Web.UI.WebControls.Literal litTotal;
 

@@ -27,7 +27,6 @@
                 <div class="col-md-3 text-md-end">
                     <asp:Button ID="btnExportSuccess" runat="server" CssClass="btn btn-outline-success btn-sm" Text="SUCCESS.csv" OnClick="btnExportSuccess_Click" />
                     <asp:Button ID="btnExportFailed" runat="server" CssClass="btn btn-outline-danger btn-sm" Text="FAILED.csv" OnClick="btnExportFailed_Click" />
-                    <asp:Button ID="btnExportAll" runat="server" CssClass="btn btn-outline-secondary btn-sm" Text="All.csv" OnClick="btnExportAll_Click" />
                 </div>
             </asp:Panel>
         </div>
@@ -35,25 +34,25 @@
 
     <div class="row g-3 mb-4">
         <div class="col-md-3 col-6">
-            <div class="mc-stat" style="background:linear-gradient(135deg,#0033a1,#0a2e8c)">
+            <div class="mc-stat">
                 <div class="label">Total</div>
                 <div class="value"><asp:Literal ID="litTotal" runat="server" Text="0" /></div>
             </div>
         </div>
         <div class="col-md-3 col-6">
-            <div class="mc-stat" style="background:linear-gradient(135deg,#137a48,#1e9e64)">
+            <div class="mc-stat">
                 <div class="label">Reconciled</div>
                 <div class="value"><asp:Literal ID="litRecon" runat="server" Text="0" /></div>
             </div>
         </div>
         <div class="col-md-3 col-6">
-            <div class="mc-stat" style="background:linear-gradient(135deg,#a3121f,#e2001a)">
+            <div class="mc-stat">
                 <div class="label">Failed</div>
                 <div class="value"><asp:Literal ID="litFailed" runat="server" Text="0" /></div>
             </div>
         </div>
         <div class="col-md-3 col-6">
-            <div class="mc-stat" style="background:linear-gradient(135deg,#5b21b6,#7c3aed)">
+            <div class="mc-stat">
                 <div class="label">Match rate</div>
                 <div class="value"><asp:Literal ID="litRate" runat="server" Text="0%" /></div>
             </div>

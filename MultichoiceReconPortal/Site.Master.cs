@@ -41,6 +41,7 @@ namespace MultichoiceReconPortal
             }
 
             litUserName.Text = CurrentUser.FullName;
+            litTopName.Text = CurrentUser.FullName;
             litRole.Text = CurrentUser.RoleName;
             litInitials.Text = GetInitials(CurrentUser.FullName);
 

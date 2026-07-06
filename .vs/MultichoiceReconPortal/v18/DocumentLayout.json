@@ -3,19 +3,27 @@
   "WorkspaceRootPath": "D:\\GAFABUSA\\PROJECTS\\MULTICHOICE RECON\\PROJECT\\portal\\MultichoiceReconPortal\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{2CF2B8BB-BBD1-4862-A96B-E7E8D120CA61}|ClassLibrary\\ClassLibrary.csproj|D:\\GAFABUSA\\PROJECTS\\MULTICHOICE RECON\\PROJECT\\portal\\MultichoiceReconPortal\\classlibrary\\controlobjects\\businesslogic.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{19A11356-8F96-4DDD-B20D-A888A3D7CC6A}|MultichoiceReconPortal\\MultichoiceReconPortal.csproj|d:\\gafabusa\\projects\\multichoice recon\\project\\portal\\multichoicereconportal\\multichoicereconportal\\dashboard.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
+      "RelativeMoniker": "D:0:0:{19A11356-8F96-4DDD-B20D-A888A3D7CC6A}|MultichoiceReconPortal\\MultichoiceReconPortal.csproj|solutionrelative:multichoicereconportal\\dashboard.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{19A11356-8F96-4DDD-B20D-A888A3D7CC6A}|MultichoiceReconPortal\\MultichoiceReconPortal.csproj|d:\\gafabusa\\projects\\multichoice recon\\project\\portal\\multichoicereconportal\\multichoicereconportal\\dashboard.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{19A11356-8F96-4DDD-B20D-A888A3D7CC6A}|MultichoiceReconPortal\\MultichoiceReconPortal.csproj|solutionrelative:multichoicereconportal\\dashboard.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2CF2B8BB-BBD1-4862-A96B-E7E8D120CA61}|ClassLibrary\\ClassLibrary.csproj|d:\\gafabusa\\projects\\multichoice recon\\project\\portal\\multichoicereconportal\\classlibrary\\controlobjects\\businesslogic.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2CF2B8BB-BBD1-4862-A96B-E7E8D120CA61}|ClassLibrary\\ClassLibrary.csproj|solutionrelative:classlibrary\\controlobjects\\businesslogic.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{19A11356-8F96-4DDD-B20D-A888A3D7CC6A}|MultichoiceReconPortal\\MultichoiceReconPortal.csproj|d:\\gafabusa\\projects\\multichoice recon\\project\\portal\\multichoicereconportal\\multichoicereconportal\\upload.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{19A11356-8F96-4DDD-B20D-A888A3D7CC6A}|MultichoiceReconPortal\\MultichoiceReconPortal.csproj|D:\\GAFABUSA\\PROJECTS\\MULTICHOICE RECON\\PROJECT\\portal\\MultichoiceReconPortal\\multichoicereconportal\\upload.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{19A11356-8F96-4DDD-B20D-A888A3D7CC6A}|MultichoiceReconPortal\\MultichoiceReconPortal.csproj|solutionrelative:multichoicereconportal\\upload.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{19A11356-8F96-4DDD-B20D-A888A3D7CC6A}|MultichoiceReconPortal\\MultichoiceReconPortal.csproj|d:\\gafabusa\\projects\\multichoice recon\\project\\portal\\multichoicereconportal\\multichoicereconportal\\upload.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
+      "AbsoluteMoniker": "D:0:0:{19A11356-8F96-4DDD-B20D-A888A3D7CC6A}|MultichoiceReconPortal\\MultichoiceReconPortal.csproj|D:\\GAFABUSA\\PROJECTS\\MULTICHOICE RECON\\PROJECT\\portal\\MultichoiceReconPortal\\multichoicereconportal\\upload.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
       "RelativeMoniker": "D:0:0:{19A11356-8F96-4DDD-B20D-A888A3D7CC6A}|MultichoiceReconPortal\\MultichoiceReconPortal.csproj|solutionrelative:multichoicereconportal\\upload.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{19A11356-8F96-4DDD-B20D-A888A3D7CC6A}|MultichoiceReconPortal\\MultichoiceReconPortal.csproj|d:\\gafabusa\\projects\\multichoice recon\\project\\portal\\multichoicereconportal\\multichoicereconportal\\default.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{19A11356-8F96-4DDD-B20D-A888A3D7CC6A}|MultichoiceReconPortal\\MultichoiceReconPortal.csproj|D:\\GAFABUSA\\PROJECTS\\MULTICHOICE RECON\\PROJECT\\portal\\MultichoiceReconPortal\\multichoicereconportal\\default.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{19A11356-8F96-4DDD-B20D-A888A3D7CC6A}|MultichoiceReconPortal\\MultichoiceReconPortal.csproj|solutionrelative:multichoicereconportal\\default.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -34,7 +42,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 16,
+          "SelectedChildIndex": 12,
           "Children": [
             {
               "$type": "Bookmark",
@@ -83,6 +91,32 @@
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "Dashboard.aspx.cs",
+              "DocumentMoniker": "D:\\GAFABUSA\\PROJECTS\\MULTICHOICE RECON\\PROJECT\\portal\\MultichoiceReconPortal\\MultichoiceReconPortal\\Dashboard.aspx.cs",
+              "RelativeDocumentMoniker": "MultichoiceReconPortal\\Dashboard.aspx.cs",
+              "ToolTip": "D:\\GAFABUSA\\PROJECTS\\MULTICHOICE RECON\\PROJECT\\portal\\MultichoiceReconPortal\\MultichoiceReconPortal\\Dashboard.aspx.cs",
+              "RelativeToolTip": "MultichoiceReconPortal\\Dashboard.aspx.cs",
+              "ViewState": "AgIAAEEAAAAAAAAAAAAwwFQAAABUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-06T13:27:09.428Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Dashboard.aspx",
+              "DocumentMoniker": "D:\\GAFABUSA\\PROJECTS\\MULTICHOICE RECON\\PROJECT\\portal\\MultichoiceReconPortal\\MultichoiceReconPortal\\Dashboard.aspx",
+              "RelativeDocumentMoniker": "MultichoiceReconPortal\\Dashboard.aspx",
+              "ToolTip": "D:\\GAFABUSA\\PROJECTS\\MULTICHOICE RECON\\PROJECT\\portal\\MultichoiceReconPortal\\MultichoiceReconPortal\\Dashboard.aspx",
+              "RelativeToolTip": "MultichoiceReconPortal\\Dashboard.aspx",
+              "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
+              "WhenOpened": "2026-07-06T11:57:46.945Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "Upload.aspx.cs",
               "DocumentMoniker": "D:\\GAFABUSA\\PROJECTS\\MULTICHOICE RECON\\PROJECT\\portal\\MultichoiceReconPortal\\MultichoiceReconPortal\\Upload.aspx.cs",
               "RelativeDocumentMoniker": "MultichoiceReconPortal\\Upload.aspx.cs",
@@ -90,12 +124,11 @@
               "RelativeToolTip": "MultichoiceReconPortal\\Upload.aspx.cs",
               "ViewState": "AgIAACcAAAAAAAAAAAAjwEAAAAAjAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-06T09:18:20.36Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-07-06T09:18:20.36Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "Upload.aspx",
               "DocumentMoniker": "D:\\GAFABUSA\\PROJECTS\\MULTICHOICE RECON\\PROJECT\\portal\\MultichoiceReconPortal\\MultichoiceReconPortal\\Upload.aspx",
               "RelativeDocumentMoniker": "MultichoiceReconPortal\\Upload.aspx",
@@ -103,12 +136,11 @@
               "RelativeToolTip": "MultichoiceReconPortal\\Upload.aspx",
               "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
-              "WhenOpened": "2026-07-06T09:16:55.537Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-07-06T09:16:55.537Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 5,
               "Title": "Default.aspx.cs",
               "DocumentMoniker": "D:\\GAFABUSA\\PROJECTS\\MULTICHOICE RECON\\PROJECT\\portal\\MultichoiceReconPortal\\MultichoiceReconPortal\\Default.aspx.cs",
               "RelativeDocumentMoniker": "MultichoiceReconPortal\\Default.aspx.cs",
@@ -116,12 +148,11 @@
               "RelativeToolTip": "MultichoiceReconPortal\\Default.aspx.cs",
               "ViewState": "AgIAABQAAAAAAAAAAAAgwCcAAABDAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-06T08:07:59.534Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-07-06T08:07:59.534Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 6,
               "Title": "Default.aspx",
               "DocumentMoniker": "D:\\GAFABUSA\\PROJECTS\\MULTICHOICE RECON\\PROJECT\\portal\\MultichoiceReconPortal\\MultichoiceReconPortal\\Default.aspx",
               "RelativeDocumentMoniker": "MultichoiceReconPortal\\Default.aspx",
@@ -133,7 +164,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 7,
               "Title": "DatabaseHandler.cs",
               "DocumentMoniker": "D:\\GAFABUSA\\PROJECTS\\MULTICHOICE RECON\\PROJECT\\portal\\MultichoiceReconPortal\\ClassLibrary\\ControlObjects\\DatabaseHandler.cs",
               "RelativeDocumentMoniker": "ClassLibrary\\ControlObjects\\DatabaseHandler.cs",
@@ -145,13 +176,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "BusinessLogic.cs",
               "DocumentMoniker": "D:\\GAFABUSA\\PROJECTS\\MULTICHOICE RECON\\PROJECT\\portal\\MultichoiceReconPortal\\ClassLibrary\\ControlObjects\\BusinessLogic.cs",
               "RelativeDocumentMoniker": "ClassLibrary\\ControlObjects\\BusinessLogic.cs",
               "ToolTip": "D:\\GAFABUSA\\PROJECTS\\MULTICHOICE RECON\\PROJECT\\portal\\MultichoiceReconPortal\\ClassLibrary\\ControlObjects\\BusinessLogic.cs",
               "RelativeToolTip": "ClassLibrary\\ControlObjects\\BusinessLogic.cs",
-              "ViewState": "AgIAAH0AAAAAAAAAAAAgwJcAAAA6AAAAAAAAAA==",
+              "ViewState": "AgIAAH0AAAAAAAAAAAAgwIoAAABPAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-07-05T09:57:34.14Z",
               "EditorCaption": ""

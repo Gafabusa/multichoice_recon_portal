@@ -9,16 +9,16 @@
     <link href="<%: ResolveUrl("~/Content/bootstrap.min.css") %>" rel="stylesheet" />
     <style>
         :root {
-            --mc-blue: #0033a1;
-            --mc-blue-dark: #001f66;
+            --mc-blue: #10664a;
+            --mc-blue-dark: #0b3d2e;
             --mc-accent: #e2001a;
         }
         html, body { height: 100%; }
         body {
             margin: 0;
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: radial-gradient(circle at 20% 20%, #1a54c4 0%, rgba(26,84,196,0) 45%),
-                        linear-gradient(135deg, var(--mc-blue-dark) 0%, var(--mc-blue) 55%, #0a2e8c 100%);
+            background: radial-gradient(circle at 20% 20%, #1e8a63 0%, rgba(30,138,99,0) 45%),
+                        linear-gradient(135deg, var(--mc-blue-dark) 0%, var(--mc-blue) 55%, #0a4f39 100%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -46,7 +46,7 @@
             padding: .85rem 1.1rem; border-radius: 12px; border: 1px solid #d7dde8; font-size: 1.05rem; width: 100%; min-height: 54px;
         }
         .login-card .form-control:focus {
-            border-color: var(--mc-blue); box-shadow: 0 0 0 .2rem rgba(0,51,161,.15);
+            border-color: var(--mc-blue); box-shadow: 0 0 0 .2rem rgba(16,102,74,.15);
         }
         .login-card .mb-3 { margin-bottom: 1.15rem !important; }
         .login-btn {
