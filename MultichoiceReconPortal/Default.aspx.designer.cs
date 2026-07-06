@@ -50,10 +50,22 @@ namespace MultichoiceReconPortal
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblError;
 
-        /// <summary>pnlInfo control.</summary>
+        /// <summary>
+        /// pnlInfo control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
         protected global::System.Web.UI.WebControls.Panel pnlInfo;
 
-        /// <summary>lblInfo control.</summary>
+        /// <summary>
+        /// lblInfo control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblInfo;
 
         /// <summary>

@@ -23,13 +23,16 @@
             align-items: center;
             justify-content: center;
         }
-        .login-wrapper { width: 100%; max-width: 900px; padding: 24px; }
+        .login-wrapper { width: 520px; max-width: 100%; padding: 20px; }
         .login-card {
             background: #fff;
             border-radius: 20px;
-            padding: 64px 96px 52px;
+            padding: 48px 44px 36px;
             box-shadow: 0 30px 60px -15px rgba(0,0,0,.45);
             width: 100%;
+        }
+        @media (max-width: 520px) {
+            .login-card { padding: 32px 22px 26px; border-radius: 16px; }
         }
         .login-brand { text-align: center; margin-bottom: 10px; }
         .login-brand img { max-width: 190px; height: auto; border-radius: 12px; }
@@ -40,7 +43,7 @@
         .login-sub { text-align: center; color: #7a869a; font-size: 1rem; margin-bottom: 30px; }
         .login-card .form-label { font-weight: 600; color: #33415c; font-size: .95rem; margin-bottom: 6px; }
         .login-card .form-control {
-            padding: 1.1rem 1.3rem; border-radius: 12px; border: 1px solid #d7dde8; font-size: 1.15rem; width: 100%; min-height: 60px;
+            padding: .85rem 1.1rem; border-radius: 12px; border: 1px solid #d7dde8; font-size: 1.05rem; width: 100%; min-height: 54px;
         }
         .login-card .form-control:focus {
             border-color: var(--mc-blue); box-shadow: 0 0 0 .2rem rgba(0,51,161,.15);
@@ -65,17 +68,17 @@
                 <h1 class="login-title">Reconciliation Portal</h1>
                 <p class="login-sub">Sign in with your email to continue</p>
 
-                <asp:Panel ID="pnlError" runat="server" Visible="false" CssClass="alert alert-danger py-2">
+                <asp:Panel ID="pnlError" runat="server" Visible="false" CssClass="alert alert-danger py-2 js-autohide">
                     <asp:Label ID="lblError" runat="server" />
                 </asp:Panel>
-                <asp:Panel ID="pnlInfo" runat="server" Visible="false" CssClass="alert alert-success py-2">
+                <asp:Panel ID="pnlInfo" runat="server" Visible="false" CssClass="alert alert-success py-2 js-autohide">
                     <asp:Label ID="lblInfo" runat="server" />
                 </asp:Panel>
 
                 <div class="mb-3">
                     <label class="form-label" for="<%= txtEmail.ClientID %>">Email address</label>
                     <asp:TextBox ID="txtEmail" runat="server" CssClass="form-control" TextMode="Email"
-                        placeholder="you@pegasus.co.ug" autocomplete="username" />
+                        placeholder="example@gmail.com" autocomplete="username" />
                 </div>
                 <div class="mb-3">
                     <label class="form-label" for="<%= txtPassword.ClientID %>">Password</label>
@@ -90,5 +93,13 @@
             </asp:Panel>
         </div>
     </form>
+    <script>
+        (function () {
+            var alerts = document.querySelectorAll('.js-autohide');
+            for (var i = 0; i < alerts.length; i++) {
+                (function (a) { setTimeout(function () { a.style.display = 'none'; }, 10000); })(alerts[i]);
+            }
+        })();
+    </script>
 </body>
 </html>

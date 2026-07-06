@@ -6,7 +6,7 @@
             <h1>Upload Statement</h1>
             <p>Upload a channel statement that didn't arrive by email. It is queued for the reconciliation engine and reconciled under your name.</p>
         </div>
-        <button type="button" class="btn btn-mc btn-lg" data-bs-toggle="modal" data-bs-target="#uploadModal">+ Upload Statement</button>
+        <button type="button" class="btn btn-mc btn-lg" onclick="mcOpenModal('uploadModal')">+ Upload Statement</button>
     </div>
 
     <asp:Panel ID="pnlMsg" runat="server" Visible="false" CssClass="alert py-2">
@@ -55,7 +55,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body p-4 mc-form">
-                        <asp:Panel ID="pnlModalMsg" runat="server" Visible="false" CssClass="alert alert-danger py-2">
+                        <asp:Panel ID="pnlModalMsg" runat="server" Visible="false" CssClass="alert alert-danger py-2 js-modal-alert">
                             <asp:Label ID="lblModalMsg" runat="server" />
                         </asp:Panel>
                         <div class="mb-3">

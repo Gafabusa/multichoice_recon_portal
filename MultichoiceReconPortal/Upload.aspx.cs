@@ -94,13 +94,14 @@ namespace MultichoiceReconPortal
         private void ShowPageMessage(string message, string cssClass)
         {
             lblMsg.Text = message;
-            pnlMsg.CssClass = "alert py-2 " + cssClass;
+            pnlMsg.CssClass = "alert py-2 js-autohide " + cssClass;
             pnlMsg.Visible = true;
         }
 
         private void ShowModalError(string message)
         {
             lblModalMsg.Text = message;
+            pnlModalMsg.CssClass = "alert alert-danger py-2 js-modal-alert";
             pnlModalMsg.Visible = true;
             ClientScript.RegisterStartupScript(GetType(), "reopenUpload",
                 "var m=new bootstrap.Modal(document.getElementById('uploadModal'));m.show();", true);

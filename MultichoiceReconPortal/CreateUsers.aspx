@@ -6,7 +6,7 @@
             <h1>Users</h1>
             <p>Create portal users and manage their access. New users get a temporary password by email and set their own on first sign in.</p>
         </div>
-        <button type="button" class="btn btn-mc btn-lg" data-bs-toggle="modal" data-bs-target="#addUserModal">+ Add User</button>
+        <button type="button" class="btn btn-mc btn-lg" onclick="mcOpenModal('addUserModal')">+ Add User</button>
     </div>
 
     <asp:Panel ID="pnlMsg" runat="server" Visible="false" CssClass="alert py-2">
@@ -66,7 +66,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body p-4 mc-form">
-                        <asp:Panel ID="pnlModalMsg" runat="server" Visible="false" CssClass="alert alert-danger py-2">
+                        <asp:Panel ID="pnlModalMsg" runat="server" Visible="false" CssClass="alert alert-danger py-2 js-modal-alert">
                             <asp:Label ID="lblModalMsg" runat="server" />
                         </asp:Panel>
                         <div class="mb-3">

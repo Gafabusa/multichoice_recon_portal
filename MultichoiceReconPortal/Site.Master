@@ -76,11 +76,11 @@
         .btn-mc { background: var(--mc-blue); border: none; color: #fff; font-weight: 600; border-radius: 9px; }
         .btn-mc:hover { background: var(--mc-blue-dark); color: #fff; }
 
-        /* ---- shared large form style (login-sized fields everywhere) ---- */
-        .mc-formcard { max-width: 900px; margin: 0 auto; }
-        .mc-form .form-label { font-weight: 600; color: #33415c; font-size: 1rem; margin-bottom: 6px; }
+        /* ---- shared form style (matches the login card) ---- */
+        .mc-formcard { max-width: 520px; margin: 0 auto; }
+        .mc-form .form-label { font-weight: 600; color: #33415c; font-size: .95rem; margin-bottom: 6px; }
         .mc-form .form-control, .mc-form .form-select {
-            padding: 1.1rem 1.3rem; border-radius: 12px; border: 1px solid #d7dde8; font-size: 1.15rem; width: 100%; min-height: 60px;
+            padding: .85rem 1.1rem; border-radius: 12px; border: 1px solid #d7dde8; font-size: 1.05rem; width: 100%; min-height: 54px;
         }
         .mc-form .form-control:focus, .mc-form .form-select:focus {
             border-color: var(--mc-blue); box-shadow: 0 0 0 .2rem rgba(0,51,161,.15);
@@ -91,11 +91,23 @@
         footer.mc-foot { color: var(--mc-muted); font-size: .78rem; padding: 16px 30px; }
 
         /* ---- responsive: sidebar stacks on small screens ---- */
-        @media (max-width: 768px) {
+        @media (max-width: 992px) {
             .mc-layout { flex-direction: column; }
             .mc-sidebar { width: 100%; flex-basis: auto; height: auto; position: static; }
             .mc-nav { flex-direction: row; flex-wrap: wrap; }
             .mc-nav a { flex: 1 1 auto; justify-content: center; }
+            .mc-side-user { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+            .mc-side-user .who { margin-bottom: 0; }
+            .mc-side-user .btn-signout { width: auto; }
+        }
+        @media (max-width: 768px) {
+            .mc-main { padding: 16px 14px 40px; }
+            .mc-page-head.d-flex { flex-direction: column; align-items: flex-start !important; gap: 12px; }
+            .mc-page-head.d-flex .btn { width: 100%; }
+        }
+        @media (max-width: 576px) {
+            .mc-stat .value { font-size: 1.4rem; }
+            .modal-dialog { margin: 10px; }
         }
     </style>
 </head>
@@ -145,6 +157,50 @@
                 var links = document.querySelectorAll('.mc-nav a');
                 for (var i = 0; i < links.length; i++) {
                     if (links[i].getAttribute('data-page') === seg) { links[i].classList.add('active'); }
+                }
+            })();
+
+            // Clear all inputs/selects within a container.
+            function mcClearFields(scope) {
+                if (!scope) return;
+                var t = scope.querySelectorAll('input[type=text],input[type=email],input[type=password]');
+                for (var i = 0; i < t.length; i++) { t[i].value = ''; }
+                var f = scope.querySelectorAll('input[type=file]');
+                for (var j = 0; j < f.length; j++) { f[j].value = ''; }
+                var s = scope.querySelectorAll('select');
+                for (var k = 0; k < s.length; k++) { s[k].selectedIndex = 0; }
+            }
+
+            // Open a popup clean (no stale error, empty fields).
+            function mcOpenModal(id) {
+                var m = document.getElementById(id);
+                if (!m) return;
+                mcClearFields(m);
+                var e = m.querySelector('.js-modal-alert');
+                if (e) { e.style.display = 'none'; }
+                if (window.bootstrap) { (bootstrap.Modal.getInstance(m) || new bootstrap.Modal(m)).show(); }
+            }
+
+            // Auto-dismiss all messages after exactly 10 seconds.
+            (function () {
+                var page = document.querySelectorAll('.js-autohide');
+                for (var i = 0; i < page.length; i++) {
+                    (function (a) { setTimeout(function () { a.style.display = 'none'; }, 10000); })(page[i]);
+                }
+                // Modal errors: hide, then close the popup and clear its fields.
+                var merr = document.querySelectorAll('.js-modal-alert');
+                for (var j = 0; j < merr.length; j++) {
+                    (function (err) {
+                        setTimeout(function () {
+                            err.style.display = 'none';
+                            var modalEl = err.closest ? err.closest('.modal') : null;
+                            if (modalEl && window.bootstrap) {
+                                var inst = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                                inst.hide();
+                                mcClearFields(modalEl);
+                            }
+                        }, 10000);
+                    })(merr[j]);
                 }
             })();
         </script>

@@ -99,7 +99,7 @@ namespace MultichoiceReconPortal
         private void ShowMessage(string message, string cssClass)
         {
             lblMsg.Text = message;
-            pnlMsg.CssClass = "alert py-2 " + cssClass;
+            pnlMsg.CssClass = "alert py-2 js-autohide " + cssClass;
             pnlMsg.Visible = true;
         }
     }

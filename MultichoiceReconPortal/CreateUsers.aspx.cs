@@ -129,15 +129,17 @@ namespace MultichoiceReconPortal
         private void ShowPageMessage(string message, string cssClass)
         {
             lblMsg.Text = message;
-            pnlMsg.CssClass = "alert py-2 " + cssClass;
+            pnlMsg.CssClass = "alert py-2 js-autohide " + cssClass;
             pnlMsg.Visible = true;
         }
 
         private void ShowModalError(string message)
         {
             lblModalMsg.Text = message;
+            pnlModalMsg.CssClass = "alert alert-danger py-2 js-modal-alert";
             pnlModalMsg.Visible = true;
-            // Re-open the modal after the postback so the user sees the error.
+            // Re-open the modal after the postback so the user sees the error
+            // (the shared script then auto-hides it and closes the popup at 10s).
             ClientScript.RegisterStartupScript(GetType(), "reopenAddUser",
                 "var m=new bootstrap.Modal(document.getElementById('addUserModal'));m.show();", true);
         }

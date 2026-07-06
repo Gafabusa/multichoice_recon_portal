@@ -10,6 +10,13 @@ namespace MultichoiceReconPortal
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            // Never cache the login page, so it always renders with the current
+            // styling (a stale cached copy was making it look smaller than the
+            // fresh Default.aspx?changed=1 render).
+            Response.Cache.SetCacheability(System.Web.HttpCacheability.NoCache);
+            Response.Cache.SetNoStore();
+            Response.Cache.SetExpires(DateTime.UtcNow.AddDays(-1));
+
             // Already signed in? Skip the login screen.
             if (!IsPostBack && Request.IsAuthenticated)
             {
