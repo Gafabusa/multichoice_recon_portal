@@ -63,73 +63,57 @@ namespace MultichoiceReconPortal
             GetRange(out from, out to);
             string bank = ddlChannel.SelectedValue;
 
-            // summary. A transaction is either RECONCILED (Reconciled = 1) or, for
-            // anything else, FAILED - so "failed" folds in the SP's old pending bucket.
-            long total = 0, recon = 0, failed = 0;
+            // summary. RECONCILED / FAILED (recon ran & failed) / PENDING (not run yet)
+            // are all computed in the SP; here we just read the counts.
+            long total = 0, recon = 0, failed = 0, pending = 0;
             DataTable stats = bll.GetDashboardStats(from, to);
             if (stats.Rows.Count > 0)
             {
                 DataRow r = stats.Rows[0];
                 total = ToLong(r["TotalTxns"]);
                 recon = ToLong(r["ReconciledCount"]);
-                failed = total - recon;
+                failed = ToLong(r["FailedCount"]);
+                pending = ToLong(r["PendingCount"]);
             }
             litTotal.Text = total.ToString("N0");
             litRecon.Text = recon.ToString("N0");
             litFailed.Text = failed.ToString("N0");
-            litRate.Text = (total > 0 ? (recon * 100m / total) : 0m).ToString("0.#") + "%";
+            // Match rate over what has actually been processed (reconciled + failed).
+            long processed = recon + failed;
+            litRate.Text = (processed > 0 ? (recon * 100m / processed) : 0m).ToString("0.#") + "%";
 
-            // transactions. Ignore the SP's computed Status/@Status filter and classify
-            // in code purely on the Reconciled flag: 1 => RECONCILED, else => FAILED.
-            DataTable dt = bll.SearchTransactions(from, to, bank, "", "");
-            ApplyStatus(dt);
+            // transactions - the grid shows the SP's Status (RECONCILED/FAILED/PENDING).
+            DataTable dt = bll.SearchTransactions(from, to, bank, "");
             gvReport.DataSource = dt;
             gvReport.DataBind();
         }
 
-        // Overwrites each row's Status column so the grid shows only RECONCILED/FAILED
-        // (never PENDING), based on the raw Reconciled flag.
-        private static void ApplyStatus(DataTable dt)
-        {
-            if (dt == null || !dt.Columns.Contains("Status")) return;
-            foreach (DataRow row in dt.Rows)
-            {
-                row["Status"] = IsReconciled(row) ? "RECONCILED" : "FAILED";
-            }
-        }
-
-        private static bool IsReconciled(DataRow row)
-        {
-            if (!row.Table.Columns.Contains("Reconciled") || row["Reconciled"] == DBNull.Value) return false;
-            return Convert.ToInt32(row["Reconciled"]) == 1;
-        }
-
         protected void btnExportSuccess_Click(object sender, EventArgs e)
         {
-            Export(true, "SUCCESS");
+            Export("RECONCILED", "SUCCESS");
         }
 
         protected void btnExportFailed_Click(object sender, EventArgs e)
         {
-            Export(false, "FAILED");
+            Export("FAILED", "FAILED");
         }
 
-        // Fetches every transaction for the range, then keeps only the reconciled
-        // rows (reconciledOnly = true) or only the not-reconciled rows (false, i.e.
-        // FAILED) - so the FAILED.csv mirrors the failed report emailed by the service.
-        private void Export(bool reconciledOnly, string label)
+        // Fetches every transaction for the range, then keeps only the rows whose
+        // Status matches (RECONCILED for SUCCESS.csv, FAILED for FAILED.csv) - so
+        // PENDING rows are never exported as failures.
+        private void Export(string status, string label)
         {
             DateTime from, to;
             GetRange(out from, out to);
             string bank = ddlChannel.SelectedValue;
 
-            DataTable all = bll.SearchTransactions(from, to, bank, "", "");
+            DataTable all = bll.SearchTransactions(from, to, bank, "");
             DataTable dt = all.Clone();
             foreach (DataRow row in all.Rows)
             {
-                if (IsReconciled(row) == reconciledOnly) dt.ImportRow(row);
+                string rowStatus = row.Table.Columns.Contains("Status") ? (row["Status"] ?? "").ToString() : "";
+                if (string.Equals(rowStatus, status, StringComparison.OrdinalIgnoreCase)) dt.ImportRow(row);
             }
-            ApplyStatus(dt);
 
             string csv = BusinessLogic.ToCsv(dt);
             string fileName = label + "_" + from.ToString("yyyyMMdd") + "_" + to.ToString("yyyyMMdd") + ".csv";

@@ -23,14 +23,14 @@
                         <asp:TemplateField HeaderText="#">
                             <ItemTemplate><%# Container.DataItemIndex + 1 %></ItemTemplate>
                         </asp:TemplateField>
-                        <asp:BoundField DataField="Bank" HeaderText="Channel" />
-                        <asp:BoundField DataField="Account" HeaderText="Account" />
+                        <asp:BoundField DataField="Partner" HeaderText="Partner" />
+                        <asp:BoundField DataField="Product" HeaderText="Product" />
                         <asp:TemplateField HeaderText="Status">
                             <ItemTemplate>
                                 <span class='badge <%# StatusClass(Eval("Status")) %>'><%# Eval("Status") %></span>
                             </ItemTemplate>
                         </asp:TemplateField>
-                        <asp:BoundField DataField="ProcessedBy" HeaderText="Processed by" />
+                        <asp:BoundField DataField="ProcessedBy" HeaderText="Uploaded by" />
                         <asp:TemplateField HeaderText="Received">
                             <ItemTemplate>
                                 <%# Eval("RecordDate") == null || Eval("RecordDate") == System.DBNull.Value ? "" : Convert.ToDateTime(Eval("RecordDate")).ToString("dd MMM yyyy HH:mm") %>

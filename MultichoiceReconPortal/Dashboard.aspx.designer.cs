@@ -105,6 +105,11 @@ namespace MultichoiceReconPortal
         protected global::System.Web.UI.WebControls.Literal litRate;
 
         /// <summary>
+        /// litPending control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Literal litPending;
+
+        /// <summary>
         /// litChartScript control.
         /// </summary>
         /// <remarks>

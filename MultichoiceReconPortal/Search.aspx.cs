@@ -57,11 +57,24 @@ namespace MultichoiceReconPortal
             if (!DateTime.TryParse(txtFrom.Text, out from)) from = DateTime.Today;
             if (!DateTime.TryParse(txtTo.Text, out to)) to = DateTime.Today;
 
-            string bank = ddlChannel.SelectedValue;
+            string partner = ddlChannel.SelectedValue;
             string status = ddlStatus.SelectedValue;
             string search = txtSearch.Text.Trim();
 
-            DataTable dt = bll.SearchTransactions(from, to, bank, status, search);
+            DataTable dt = bll.SearchTransactions(from, to, partner, search);
+
+            // Status (RECONCILED / FAILED / PENDING) is computed in the SP; filter on it.
+            if (!string.IsNullOrEmpty(status))
+            {
+                DataTable filtered = dt.Clone();
+                foreach (DataRow row in dt.Rows)
+                {
+                    string rowStatus = row.Table.Columns.Contains("Status") ? (row["Status"] ?? "").ToString() : "";
+                    if (string.Equals(rowStatus, status, StringComparison.OrdinalIgnoreCase)) filtered.ImportRow(row);
+                }
+                dt = filtered;
+            }
+
             gvResults.DataSource = dt;
             gvResults.DataBind();
 

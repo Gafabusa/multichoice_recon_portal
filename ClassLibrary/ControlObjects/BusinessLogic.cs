@@ -125,11 +125,10 @@ namespace ClassLibrary.ControlObjects
 
         // ---- manual upload ---------------------------------------------------
 
-        /// <summary>Channels the portal accepts manual uploads for (from config).</summary>
+        /// <summary>Partners the portal accepts manual uploads for (from the Partners table).</summary>
         public string[] GetChannels()
         {
-            string csv = CommonLogic.ReadAppSetting("CHANNELS", "AIRTEL");
-            return csv.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            return db.GetPartnerCodes();
         }
 
         /// <summary>
@@ -203,14 +202,9 @@ namespace ClassLibrary.ControlObjects
             return db.GetByChannel(fromDate, toDate);
         }
 
-        public DataTable GetFailureReasons(DateTime fromDate, DateTime toDate)
+        public DataTable SearchTransactions(DateTime fromDate, DateTime toDate, string partner, string search)
         {
-            return db.GetFailureReasons(fromDate, toDate);
-        }
-
-        public DataTable SearchTransactions(DateTime fromDate, DateTime toDate, string bank, string status, string search)
-        {
-            return db.SearchTransactions(fromDate, toDate, bank, status, search);
+            return db.SearchTransactions(fromDate, toDate, partner, search);
         }
 
         /// <summary>Renders a DataTable to CSV (for the SUCCESS/FAILED excel downloads).</summary>

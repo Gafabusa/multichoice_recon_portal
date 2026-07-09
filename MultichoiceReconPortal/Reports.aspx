@@ -69,12 +69,12 @@
                     <Columns>
                         <asp:TemplateField HeaderText="Date">
                             <ItemTemplate>
-                                <%# Eval("TranDate") == null || Eval("TranDate") == System.DBNull.Value ? "" : Convert.ToDateTime(Eval("TranDate")).ToString("dd MMM yyyy") %>
+                                <%# Eval("PaymentDate") == null || Eval("PaymentDate") == System.DBNull.Value ? "" : Convert.ToDateTime(Eval("PaymentDate")).ToString("dd MMM yyyy") %>
                             </ItemTemplate>
                         </asp:TemplateField>
-                        <asp:BoundField DataField="Bank" HeaderText="Channel" />
-                        <asp:BoundField DataField="TransId" HeaderText="Txn ID" />
-                        <asp:BoundField DataField="Phone" HeaderText="Phone" />
+                        <asp:BoundField DataField="Partner" HeaderText="Partner" />
+                        <asp:BoundField DataField="PartnerTxnRef" HeaderText="Reference" />
+                        <asp:BoundField DataField="SmartCardNumber" HeaderText="Smart card" />
                         <asp:BoundField DataField="Amount" HeaderText="Amount" DataFormatString="{0:N0}" ItemStyle-CssClass="text-end" />
                         <asp:TemplateField HeaderText="Status">
                             <ItemTemplate>

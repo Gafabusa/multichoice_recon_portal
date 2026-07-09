@@ -91,37 +91,43 @@ namespace ClassLibrary.ControlObjects
             ExecuteNonQuery("ResetUserPasswordMultichoice", userId, passwordHash);
         }
 
+        // ---- partners (the catalog of partners we deal with) ------------------
+
+        /// <summary>The partner codes we deal with, from the Partners table.</summary>
+        public string[] GetPartnerCodes()
+        {
+            List<string> codes = new List<string>();
+            DataTable dt = ExecuteDataSet("GetPartners2").Tables[0];
+            foreach (DataRow dr in dt.Rows) codes.Add(dr["PartnerCode"].ToString());
+            return codes.ToArray();
+        }
+
         // ---- recon reporting (read-only) -------------------------------------
 
         public DataTable GetDashboardStats(DateTime fromDate, DateTime toDate)
         {
-            return ExecuteDataSet("GetReconDashboardStatsMultichoice", fromDate, toDate).Tables[0];
+            return ExecuteDataSet("GetReconDashboardStats2", fromDate, toDate).Tables[0];
         }
 
         public DataTable GetDailyTrend(DateTime fromDate, DateTime toDate)
         {
-            return ExecuteDataSet("GetReconDailyTrendMultichoice", fromDate, toDate).Tables[0];
+            return ExecuteDataSet("GetReconDailyTrend2", fromDate, toDate).Tables[0];
         }
 
         public DataTable GetByChannel(DateTime fromDate, DateTime toDate)
         {
-            return ExecuteDataSet("GetReconByChannelMultichoice", fromDate, toDate).Tables[0];
+            return ExecuteDataSet("GetReconByChannel2", fromDate, toDate).Tables[0];
         }
 
-        public DataTable GetFailureReasons(DateTime fromDate, DateTime toDate)
+        public DataTable SearchTransactions(DateTime fromDate, DateTime toDate, string partner, string search)
         {
-            return ExecuteDataSet("GetReconFailureReasonsMultichoice", fromDate, toDate).Tables[0];
-        }
-
-        public DataTable SearchTransactions(DateTime fromDate, DateTime toDate, string bank, string status, string search)
-        {
-            return ExecuteDataSet("SearchReconTransactionsMultichoice", fromDate, toDate,
-                (object)bank ?? DBNull.Value, (object)status ?? DBNull.Value, (object)search ?? DBNull.Value).Tables[0];
+            return ExecuteDataSet("SearchReconTransactions2", fromDate, toDate,
+                (object)partner ?? DBNull.Value, (object)search ?? DBNull.Value).Tables[0];
         }
 
         public DataTable GetRecentStatements(int top)
         {
-            return ExecuteDataSet("GetRecentStatementsMultichoice", top).Tables[0];
+            return ExecuteDataSet("GetRecentStatements2", top).Tables[0];
         }
 
         // ---- email ------------------------------------------------------------

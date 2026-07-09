@@ -46,6 +46,7 @@
             <div class="mc-stat">
                 <div class="label">Match rate</div>
                 <div class="value"><asp:Literal ID="litRate" runat="server" Text="0%" /></div>
+                <div class="sub"><asp:Literal ID="litPending" runat="server" Text="0" /> pending recon</div>
             </div>
         </div>
     </div>
@@ -67,7 +68,11 @@
         <div class="col-lg-12">
             <div class="mc-card">
                 <div class="card-header py-2">By channel</div>
-                <div class="card-body"><div class="mc-chartbox tall"><canvas id="chartChannel"></canvas></div></div>
+                <div class="card-body">
+                    <div style="overflow-x:auto;">
+                        <div id="chartChannelBox" class="mc-chartbox tall"><canvas id="chartChannel"></canvas></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

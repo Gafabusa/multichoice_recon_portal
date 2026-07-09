@@ -40,9 +40,9 @@ namespace MultichoiceReconPortal
             if (!DateTime.TryParse(txtFrom.Text, out from)) from = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
             if (!DateTime.TryParse(txtTo.Text, out to)) to = DateTime.Today;
 
-            // KPIs. A transaction is either RECONCILED (Reconciled = 1) or FAILED -
-            // there is no pending bucket, so failed = total - reconciled.
-            long total = 0, recon = 0, failed = 0;
+            // KPIs. RECONCILED / FAILED (recon ran & failed) / PENDING (not run yet)
+            // all come from the SP. Failed is only recon-ran-and-failed, never pending.
+            long total = 0, recon = 0, failed = 0, pending = 0;
             decimal totalAmt = 0, reconAmt = 0, failedAmt = 0;
             DataTable stats = bll.GetDashboardStats(from, to);
             if (stats.Rows.Count > 0)
@@ -50,16 +50,20 @@ namespace MultichoiceReconPortal
                 DataRow r = stats.Rows[0];
                 total = ToLong(r["TotalTxns"]);
                 recon = ToLong(r["ReconciledCount"]);
-                failed = total - recon;
+                failed = ToLong(r["FailedCount"]);
+                pending = ToLong(r["PendingCount"]);
                 totalAmt = ToDec(r["TotalAmount"]);
                 reconAmt = ToDec(r["ReconciledAmount"]);
-                failedAmt = totalAmt - reconAmt;
+                failedAmt = ToDec(r["FailedAmount"]);
             }
 
             litTotal.Text = total.ToString("N0");
             litRecon.Text = recon.ToString("N0");
             litFailed.Text = failed.ToString("N0");
-            litRate.Text = (total > 0 ? (recon * 100m / total) : 0m).ToString("0.#") + "%";
+            litPending.Text = pending.ToString("N0");
+            // Match rate over what has actually been processed (reconciled + failed).
+            long processed = recon + failed;
+            litRate.Text = (processed > 0 ? (recon * 100m / processed) : 0m).ToString("0.#") + "%";
 
             // Only admins see the money figures; uploaders see counts only.
             PortalUser current = Session["User"] as PortalUser;
@@ -77,7 +81,7 @@ namespace MultichoiceReconPortal
             string trendLabels = "''," + JsLabels(trend, "Day", true);
             string trendRecon = "0," + JsNumbers(trend, "Reconciled");
             string trendFailed = "0," + JsNumbers(trend, "Failed");
-            string chLabels = JsLabels(channel, "Bank", false);
+            string chLabels = JsLabels(channel, "Partner", false);
             string chRecon = JsNumbers(channel, "Reconciled");
             string chFailed = JsNumbers(channel, "Failed");
 
@@ -92,24 +96,26 @@ namespace MultichoiceReconPortal
              .Append(recon).Append(',').Append(failed)
              .Append("],backgroundColor:['#10664a','#e2001a']}]},options:base});");
 
-            // Daily trend: per-day counts for the selected range as a clean line
-            // (no area fill, no dots), rising or falling with the actual numbers.
-            // The y-axis is pinned to 0 and the series is anchored at 0 on the left.
+            // Daily trend: clean lines (no dots). x:offset keeps the ends off the left/
+            // right edges and y:grace adds headroom so the peak doesn't touch the top -
+            // so the line never runs into the top-right corner. interaction:index means
+            // hovering anywhere on a day shows both counts in the tooltip.
             s.Append("new Chart(document.getElementById('chartTrend'),{type:'line',data:{labels:[").Append(trendLabels)
              .Append("],datasets:[{label:'Reconciled',data:[").Append(trendRecon)
              .Append("],borderColor:'#10664a',tension:.25,fill:false,borderWidth:3,pointRadius:0,pointHoverRadius:5},{label:'Failed',data:[").Append(trendFailed)
              .Append("],borderColor:'#e2001a',tension:.25,fill:false,borderWidth:3,pointRadius:0,pointHoverRadius:5}]},")
-             .Append("options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},scales:{y:{beginAtZero:true,min:0,ticks:{precision:0}}}}});");
+             .Append("options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom'},tooltip:{enabled:true}},scales:{x:{offset:false,grid:{display:false}},y:{beginAtZero:true,min:0,grace:'15%',ticks:{precision:0}}}}});");
 
-            // By channel: grouped bars, side by side - a green Reconciled bar then a
-            // red Failed bar under each channel label, both growing from zero. A small
-            // categoryPercentage keeps the pair together and the bars slim (not huge)
-            // even when there is only one channel. NOT stacked - the datasets are not
-            // stacked on the x/y scales, so they sit next to each other.
+            // By channel: grouped (side by side) with a FIXED small width so the green
+            // Reconciled bar and red Failed bar touch as a neat pair under each partner.
+            // The box width is sized to the partner count (not the full container), so
+            // the bars pack from the LEFT (not centered) and many partners scroll.
+            int channelBoxWidth = Math.Max(150, channel.Rows.Count * 150);
+            s.Append("var chBox=document.getElementById('chartChannelBox');if(chBox){chBox.style.width='").Append(channelBoxWidth).Append("px';}");
             s.Append("new Chart(document.getElementById('chartChannel'),{type:'bar',data:{labels:[").Append(chLabels)
              .Append("],datasets:[{label:'Reconciled',data:[").Append(chRecon)
-             .Append("],backgroundColor:'#10664a',categoryPercentage:.35,barPercentage:.7},{label:'Failed',data:[").Append(chFailed)
-             .Append("],backgroundColor:'#e2001a',categoryPercentage:.35,barPercentage:.7}]},")
+             .Append("],backgroundColor:'#10664a',barThickness:22},{label:'Failed',data:[").Append(chFailed)
+             .Append("],backgroundColor:'#e2001a',barThickness:22}]},")
              .Append("options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},scales:{x:{grid:{display:false},ticks:{autoSkip:false,maxRotation:0,minRotation:0}},y:{beginAtZero:true,min:0,ticks:{precision:0}}}}});");
             s.Append("})();</script>");
             litChartScript.Text = s.ToString();
