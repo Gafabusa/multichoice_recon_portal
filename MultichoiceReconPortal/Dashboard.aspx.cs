@@ -85,6 +85,18 @@ namespace MultichoiceReconPortal
             string chRecon = JsNumbers(channel, "Reconciled");
             string chFailed = JsNumbers(channel, "Failed");
 
+            // Pad the by-channel data to a minimum number of slots so a few partners
+            // sit at the LEFT while the grid still spans the full width. The extra
+            // slots have null data (no bars) and blank labels.
+            int realPartners = channel.Rows.Count;
+            int channelSlots = realPartners < 8 ? 8 : realPartners;
+            for (int i = realPartners; i < channelSlots; i++)
+            {
+                chLabels += (chLabels.Length > 0 ? "," : "") + "''";
+                chRecon += (chRecon.Length > 0 ? "," : "") + "null";
+                chFailed += (chFailed.Length > 0 ? "," : "") + "null";
+            }
+
             // Charts share these greens; maintainAspectRatio:false lets the fixed-height
             // .mc-chartbox control the height so everything fits without scrolling.
             StringBuilder s = new StringBuilder();
@@ -96,22 +108,22 @@ namespace MultichoiceReconPortal
              .Append(recon).Append(',').Append(failed)
              .Append("],backgroundColor:['#10664a','#e2001a']}]},options:base});");
 
-            // Daily trend: clean lines (no dots). x:offset keeps the ends off the left/
-            // right edges and y:grace adds headroom so the peak doesn't touch the top -
-            // so the line never runs into the top-right corner. interaction:index means
-            // hovering anywhere on a day shows both counts in the tooltip.
+            // Daily trend: clean lines (no dots). x:offset=false so the line STARTS at
+            // the zero point (left axis); right/top padding + y:grace keep the far end
+            // away from the top-right corner. interaction:index shows both counts on hover.
             s.Append("new Chart(document.getElementById('chartTrend'),{type:'line',data:{labels:[").Append(trendLabels)
              .Append("],datasets:[{label:'Reconciled',data:[").Append(trendRecon)
              .Append("],borderColor:'#10664a',tension:.25,fill:false,borderWidth:3,pointRadius:0,pointHoverRadius:5},{label:'Failed',data:[").Append(trendFailed)
              .Append("],borderColor:'#e2001a',tension:.25,fill:false,borderWidth:3,pointRadius:0,pointHoverRadius:5}]},")
-             .Append("options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom'},tooltip:{enabled:true}},scales:{x:{offset:false,grid:{display:false}},y:{beginAtZero:true,min:0,grace:'15%',ticks:{precision:0}}}}});");
+             .Append("options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},layout:{padding:{right:32,top:16}},plugins:{legend:{position:'bottom'},tooltip:{enabled:true}},scales:{x:{offset:false,grid:{display:false}},y:{beginAtZero:true,min:0,grace:'18%',ticks:{precision:0}}}}});");
 
-            // By channel: grouped (side by side) with a FIXED small width so the green
-            // Reconciled bar and red Failed bar touch as a neat pair under each partner.
-            // The box width is sized to the partner count (not the full container), so
-            // the bars pack from the LEFT (not centered) and many partners scroll.
-            int channelBoxWidth = Math.Max(150, channel.Rows.Count * 150);
-            s.Append("var chBox=document.getElementById('chartChannelBox');if(chBox){chBox.style.width='").Append(channelBoxWidth).Append("px';}");
+            // By channel: grouped, FIXED small touching bars. The chart stays FULL WIDTH
+            // (so the horizontal gridlines span the whole card); the padded empty slots
+            // keep a few partners' bars packed at the LEFT. Only scroll for many partners.
+            if (channelSlots > 14)
+                s.Append("var chBox=document.getElementById('chartChannelBox');if(chBox){chBox.style.width='").Append(channelSlots * 90).Append("px';}");
+            else
+                s.Append("var chBox=document.getElementById('chartChannelBox');if(chBox){chBox.style.width='100%';}");
             s.Append("new Chart(document.getElementById('chartChannel'),{type:'bar',data:{labels:[").Append(chLabels)
              .Append("],datasets:[{label:'Reconciled',data:[").Append(chRecon)
              .Append("],backgroundColor:'#10664a',barThickness:22},{label:'Failed',data:[").Append(chFailed)
