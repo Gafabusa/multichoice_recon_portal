@@ -102,6 +102,14 @@ namespace ClassLibrary.ControlObjects
             return codes.ToArray();
         }
 
+        public HashSet<string> GetReconciledRefs(string partner)
+        {
+            HashSet<string> refs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            DataTable dt = ExecuteDataSet("GetReconciledRefs2", partner).Tables[0];
+            foreach (DataRow dr in dt.Rows) refs.Add(dr["PartnerTxnRef"].ToString());
+            return refs;
+        }
+
         // ---- recon reporting (read-only) -------------------------------------
 
         public DataTable GetDashboardStats(DateTime fromDate, DateTime toDate)

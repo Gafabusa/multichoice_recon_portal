@@ -27,6 +27,7 @@
                         <asp:ListItem Value="">All</asp:ListItem>
                         <asp:ListItem Value="RECONCILED">Reconciled</asp:ListItem>
                         <asp:ListItem Value="FAILED">Failed</asp:ListItem>
+                        <asp:ListItem Value="UNRECONCILED">Unreconciled</asp:ListItem>
                         <asp:ListItem Value="PENDING">Pending</asp:ListItem>
                     </asp:DropDownList>
                 </div>

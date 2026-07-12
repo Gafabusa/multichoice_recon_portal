@@ -59,10 +59,22 @@ namespace MultichoiceReconPortal
                 return;
             }
 
+            byte[] bytes = fuStatement.FileBytes;
+
+            int totalRefs;
+            System.Collections.Generic.List<string> alreadyReconciled = bll.FindAlreadyReconciled(channel, bytes, out totalRefs);
+
+            if (alreadyReconciled.Count > 0 && alreadyReconciled.Count >= totalRefs)
+            {
+                ShowModalError("This file was not uploaded. All " + alreadyReconciled.Count +
+                    " transaction(s) in it were already reconciled.");
+                return;
+            }
+
             UploadResult result;
             try
             {
-                result = bll.SaveUpload(channel, fuStatement.FileName, fuStatement.FileBytes, user.FullName, user.Email);
+                result = bll.SaveUpload(channel, fuStatement.FileName, bytes, user.FullName, user.Email);
             }
             catch (Exception ex)
             {
@@ -72,7 +84,17 @@ namespace MultichoiceReconPortal
 
             if (result.Success)
             {
-                ShowPageMessage(result.Message, "alert-success");
+                if (alreadyReconciled.Count > 0)
+                {
+                    int sentForRecon = totalRefs - alreadyReconciled.Count;
+                    ShowPageMessage(result.Message + " Note: " + alreadyReconciled.Count +
+                        " transaction(s) were already reconciled and will be skipped; " + sentForRecon +
+                        " transaction(s) have been sent for reconciliation.", "alert-warning");
+                }
+                else
+                {
+                    ShowPageMessage(result.Message, "alert-success");
+                }
                 BindRecent();
             }
             else

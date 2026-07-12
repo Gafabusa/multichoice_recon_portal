@@ -63,9 +63,7 @@ namespace MultichoiceReconPortal
             GetRange(out from, out to);
             string bank = ddlChannel.SelectedValue;
 
-            // summary. RECONCILED / FAILED (recon ran & failed) / PENDING (not run yet)
-            // are all computed in the SP; here we just read the counts.
-            long total = 0, recon = 0, failed = 0, pending = 0;
+            long total = 0, recon = 0, failed = 0, unrecon = 0;
             DataTable stats = bll.GetDashboardStats(from, to);
             if (stats.Rows.Count > 0)
             {
@@ -73,13 +71,13 @@ namespace MultichoiceReconPortal
                 total = ToLong(r["TotalTxns"]);
                 recon = ToLong(r["ReconciledCount"]);
                 failed = ToLong(r["FailedCount"]);
-                pending = ToLong(r["PendingCount"]);
+                unrecon = ToLong(r["UnreconciledCount"]);
             }
             litTotal.Text = total.ToString("N0");
             litRecon.Text = recon.ToString("N0");
             litFailed.Text = failed.ToString("N0");
-            // Match rate over what has actually been processed (reconciled + failed).
-            long processed = recon + failed;
+            litUnrecon.Text = unrecon.ToString("N0");
+            long processed = recon + failed + unrecon;
             litRate.Text = (processed > 0 ? (recon * 100m / processed) : 0m).ToString("0.#") + "%";
 
             // transactions - the grid shows the SP's Status (RECONCILED/FAILED/PENDING).
@@ -96,6 +94,11 @@ namespace MultichoiceReconPortal
         protected void btnExportFailed_Click(object sender, EventArgs e)
         {
             Export("FAILED", "FAILED");
+        }
+
+        protected void btnExportUnrecon_Click(object sender, EventArgs e)
+        {
+            Export("UNRECONCILED", "UNRECONCILED");
         }
 
         // Fetches every transaction for the range, then keeps only the rows whose

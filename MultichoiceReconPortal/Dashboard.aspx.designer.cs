@@ -60,6 +60,15 @@ namespace MultichoiceReconPortal
         protected global::System.Web.UI.WebControls.Literal litTotalAmt;
 
         /// <summary>
+        /// litPending control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal litPending;
+
+        /// <summary>
         /// litRecon control.
         /// </summary>
         /// <remarks>
@@ -78,24 +87,6 @@ namespace MultichoiceReconPortal
         protected global::System.Web.UI.WebControls.Literal litReconAmt;
 
         /// <summary>
-        /// litFailed control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal litFailed;
-
-        /// <summary>
-        /// litFailedAmt control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal litFailedAmt;
-
-        /// <summary>
         /// litRate control.
         /// </summary>
         /// <remarks>
@@ -105,9 +96,22 @@ namespace MultichoiceReconPortal
         protected global::System.Web.UI.WebControls.Literal litRate;
 
         /// <summary>
-        /// litPending control.
+        /// litFailed control.
         /// </summary>
-        protected global::System.Web.UI.WebControls.Literal litPending;
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal litFailed;
+
+        /// <summary>
+        /// litUnrecon control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal litUnrecon;
 
         /// <summary>
         /// litChartScript control.

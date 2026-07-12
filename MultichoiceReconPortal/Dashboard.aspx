@@ -19,13 +19,13 @@
         </div>
     </div>
 
-    <!-- KPI cards (all identical light cards) -->
     <div class="row g-3 mb-4">
         <div class="col-md-3 col-sm-6">
             <div class="mc-stat">
                 <div class="label">Total transactions</div>
                 <div class="value"><asp:Literal ID="litTotal" runat="server" Text="0" /></div>
                 <div class="sub"><asp:Literal ID="litTotalAmt" runat="server" /></div>
+                <div class="sub"><asp:Literal ID="litPending" runat="server" Text="0" /> pending recon</div>
             </div>
         </div>
         <div class="col-md-3 col-sm-6">
@@ -33,20 +33,19 @@
                 <div class="label">Reconciled</div>
                 <div class="value"><asp:Literal ID="litRecon" runat="server" Text="0" /></div>
                 <div class="sub"><asp:Literal ID="litReconAmt" runat="server" /></div>
+                <div class="sub"><asp:Literal ID="litRate" runat="server" Text="0%" /> match rate</div>
             </div>
         </div>
         <div class="col-md-3 col-sm-6">
             <div class="mc-stat">
                 <div class="label">Failed</div>
                 <div class="value"><asp:Literal ID="litFailed" runat="server" Text="0" /></div>
-                <div class="sub"><asp:Literal ID="litFailedAmt" runat="server" /></div>
             </div>
         </div>
         <div class="col-md-3 col-sm-6">
             <div class="mc-stat">
-                <div class="label">Match rate</div>
-                <div class="value"><asp:Literal ID="litRate" runat="server" Text="0%" /></div>
-                <div class="sub"><asp:Literal ID="litPending" runat="server" Text="0" /> pending recon</div>
+                <div class="label">Unreconciled</div>
+                <div class="value"><asp:Literal ID="litUnrecon" runat="server" Text="0" /></div>
             </div>
         </div>
     </div>

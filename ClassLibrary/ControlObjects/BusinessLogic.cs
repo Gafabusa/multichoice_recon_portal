@@ -143,7 +143,7 @@ namespace ClassLibrary.ControlObjects
             UploadResult result = new UploadResult();
             try
             {
-                string rawRoot = CommonLogic.ReadAppSetting("RAW_FOLDER_ROOT", @"D:\MultichoiceReconFiles\raw");
+                string rawRoot = CommonLogic.ReadAppSetting("RAW_FOLDER_ROOT");
                 string dir = Path.Combine(rawRoot, channel);
                 Directory.CreateDirectory(dir);
 
@@ -183,6 +183,38 @@ namespace ClassLibrary.ControlObjects
         public DataTable GetRecentUploads(int top)
         {
             return db.GetRecentStatements(top);
+        }
+
+        /// <summary>
+        /// Returns the references in the uploaded file that were already reconciled
+        /// for this partner. totalRefs returns the count of distinct references found.
+        /// </summary>
+        public List<string> FindAlreadyReconciled(string partner, byte[] content, out int totalRefs)
+        {
+            List<string> duplicates = new List<string>();
+            HashSet<string> distinct = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            totalRefs = 0;
+            if (content == null || content.Length == 0) return duplicates;
+
+            HashSet<string> reconciled = db.GetReconciledRefs(partner);
+
+            using (StreamReader reader = new StreamReader(new MemoryStream(content)))
+            {
+                string line;
+                bool first = true;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    line = line.Trim();
+                    if (line.Length == 0) continue;
+                    string reference = line.Split(',')[0].Trim();
+                    if (first && reference.Equals("PartnerTxnRef", StringComparison.OrdinalIgnoreCase)) { first = false; continue; }
+                    first = false;
+                    if (reference.Length == 0 || !distinct.Add(reference)) continue;
+                    if (reconciled.Contains(reference)) duplicates.Add(reference);
+                }
+            }
+            totalRefs = distinct.Count;
+            return duplicates;
         }
 
         // ---- reporting (read-only) -------------------------------------------

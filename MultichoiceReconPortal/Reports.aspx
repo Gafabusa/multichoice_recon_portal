@@ -27,6 +27,7 @@
                 <div class="col-md-3 text-md-end">
                     <asp:Button ID="btnExportSuccess" runat="server" CssClass="btn btn-outline-success btn-sm" Text="SUCCESS.csv" OnClick="btnExportSuccess_Click" />
                     <asp:Button ID="btnExportFailed" runat="server" CssClass="btn btn-outline-danger btn-sm" Text="FAILED.csv" OnClick="btnExportFailed_Click" />
+                    <asp:Button ID="btnExportUnrecon" runat="server" CssClass="btn btn-outline-warning btn-sm" Text="UNRECONCILED.csv" OnClick="btnExportUnrecon_Click" />
                 </div>
             </asp:Panel>
         </div>
@@ -53,8 +54,9 @@
         </div>
         <div class="col-md-3 col-6">
             <div class="mc-stat">
-                <div class="label">Match rate</div>
-                <div class="value"><asp:Literal ID="litRate" runat="server" Text="0%" /></div>
+                <div class="label">Unreconciled</div>
+                <div class="value"><asp:Literal ID="litUnrecon" runat="server" Text="0" /></div>
+                <div class="sub"><asp:Literal ID="litRate" runat="server" Text="0%" /> match rate</div>
             </div>
         </div>
     </div>

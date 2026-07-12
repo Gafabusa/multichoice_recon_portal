@@ -32,6 +32,9 @@ namespace MultichoiceReconPortal
         /// <summary>btnExportFailed control.</summary>
         protected global::System.Web.UI.WebControls.Button btnExportFailed;
 
+        /// <summary>btnExportUnrecon control.</summary>
+        protected global::System.Web.UI.WebControls.Button btnExportUnrecon;
+
         /// <summary>litTotal control.</summary>
         protected global::System.Web.UI.WebControls.Literal litTotal;
 
@@ -43,6 +46,9 @@ namespace MultichoiceReconPortal
 
         /// <summary>litRate control.</summary>
         protected global::System.Web.UI.WebControls.Literal litRate;
+
+        /// <summary>litUnrecon control.</summary>
+        protected global::System.Web.UI.WebControls.Literal litUnrecon;
 
         /// <summary>gvReport control.</summary>
         protected global::System.Web.UI.WebControls.GridView gvReport;
