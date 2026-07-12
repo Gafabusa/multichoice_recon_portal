@@ -19,7 +19,7 @@
             <div class="table-responsive">
                 <asp:GridView ID="gvUsers" runat="server" CssClass="table table-hover align-middle mb-0"
                     AutoGenerateColumns="false" GridLines="None"
-                    DataKeyNames="UserId,Email,FullName,IsActive"
+                    DataKeyNames="UserId,Email,FullName,IsActive,RoleId"
                     OnRowCommand="gvUsers_RowCommand">
                     <Columns>
                         <asp:TemplateField HeaderText="#">
@@ -42,9 +42,19 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Actions">
                             <ItemTemplate>
-                                <asp:LinkButton runat="server" CssClass='<%# "btn btn-sm " + (Convert.ToBoolean(Eval("IsActive")) ? "btn-outline-danger" : "btn-outline-success") %>'
-                                    CommandName="ToggleActive" CommandArgument="<%# Container.DataItemIndex %>"
-                                    Text='<%# Convert.ToBoolean(Eval("IsActive")) ? "Disable" : "Enable" %>' />
+                                <div class="d-flex flex-wrap gap-1">
+                                    <asp:LinkButton runat="server" CssClass="btn btn-sm btn-outline-primary"
+                                        CommandName="EditUser" CommandArgument="<%# Container.DataItemIndex %>" Text="Edit" />
+                                    <asp:LinkButton runat="server" CssClass="btn btn-sm btn-outline-secondary"
+                                        CommandName="ResetPwd" CommandArgument="<%# Container.DataItemIndex %>" Text="Reset password"
+                                        OnClientClick="return confirm('Reset this user\'s password and email them a new temporary one?');" />
+                                    <asp:LinkButton runat="server" CssClass='<%# "btn btn-sm " + (Convert.ToBoolean(Eval("IsActive")) ? "btn-outline-danger" : "btn-outline-success") %>'
+                                        CommandName="ToggleActive" CommandArgument="<%# Container.DataItemIndex %>"
+                                        Text='<%# Convert.ToBoolean(Eval("IsActive")) ? "Disable" : "Enable" %>' />
+                                    <asp:LinkButton runat="server" CssClass="btn btn-sm btn-outline-danger"
+                                        CommandName="DeleteUser" CommandArgument="<%# Container.DataItemIndex %>" Text="Delete"
+                                        OnClientClick="return confirm('Delete this user permanently? This cannot be undone.');" />
+                                </div>
                             </ItemTemplate>
                         </asp:TemplateField>
                     </Columns>
@@ -85,6 +95,42 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline-secondary btn-lg" data-bs-dismiss="modal">Cancel</button>
                         <asp:Button ID="btnCreate" runat="server" CssClass="btn btn-mc btn-lg" Text="Create User" OnClick="btnCreate_Click" />
+                    </div>
+                </asp:Panel>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit User modal -->
+    <div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <asp:Panel ID="pnlEditForm" runat="server" DefaultButton="btnUpdate">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit user</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4 mc-form">
+                        <asp:HiddenField ID="hfEditUserId" runat="server" />
+                        <asp:Panel ID="pnlEditMsg" runat="server" Visible="false" CssClass="alert alert-danger py-2 js-modal-alert">
+                            <asp:Label ID="lblEditMsg" runat="server" />
+                        </asp:Panel>
+                        <div class="mb-3">
+                            <label class="form-label">Full name</label>
+                            <asp:TextBox ID="txtEditFullName" runat="server" CssClass="form-control" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <asp:TextBox ID="txtEditEmail" runat="server" CssClass="form-control" TextMode="Email" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Role</label>
+                            <asp:DropDownList ID="ddlEditRole" runat="server" CssClass="form-select" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary btn-lg" data-bs-dismiss="modal">Cancel</button>
+                        <asp:Button ID="btnUpdate" runat="server" CssClass="btn btn-mc btn-lg" Text="Save changes" OnClick="btnUpdate_Click" />
                     </div>
                 </asp:Panel>
             </div>

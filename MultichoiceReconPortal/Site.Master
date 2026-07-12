@@ -158,10 +158,12 @@
                     </div>
                     <nav class="mc-nav">
                         <a href="<%: ResolveUrl("~/Dashboard.aspx") %>" data-page="dashboard">Dashboard</a>
-                        <a href="<%: ResolveUrl("~/Upload.aspx") %>" data-page="upload">Upload</a>
+                        <a id="liUpload" runat="server" href="~/Upload.aspx" data-page="upload">Upload</a>
                         <a href="<%: ResolveUrl("~/Search.aspx") %>" data-page="search">Search</a>
                         <a href="<%: ResolveUrl("~/Reports.aspx") %>" data-page="reports">Reports</a>
+                        <a id="liAssignments" runat="server" href="~/Assignments.aspx" data-page="assignments">Partner Assignments</a>
                         <a id="liUsers" runat="server" href="~/CreateUsers.aspx" data-page="createusers">Users</a>
+                        <a id="liAudit" runat="server" href="~/AuditLog.aspx" data-page="auditlog">Audit Log</a>
                         <a href="<%: ResolveUrl("~/ChangePassword.aspx") %>" data-page="changepassword">Change Password</a>
                     </nav>
                     <div class="mc-side-user">

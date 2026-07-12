@@ -60,6 +60,7 @@ namespace MultichoiceReconPortal
 
             Session["User"] = user;
             FormsAuthentication.SetAuthCookie(user.Email, false);
+            new BusinessLogic().LogAudit(user, "Login", "Signed in");
 
             if (user.MustChangePassword)
             {

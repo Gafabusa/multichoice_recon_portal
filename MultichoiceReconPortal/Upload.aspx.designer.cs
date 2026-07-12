@@ -94,5 +94,23 @@ namespace MultichoiceReconPortal
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnUpload;
+
+        /// <summary>pnlMultichoiceBtn control (Head Accounts only).</summary>
+        protected global::System.Web.UI.WebControls.Panel pnlMultichoiceBtn;
+
+        /// <summary>pnlMcForm control.</summary>
+        protected global::System.Web.UI.WebControls.Panel pnlMcForm;
+
+        /// <summary>pnlMcModalMsg control.</summary>
+        protected global::System.Web.UI.WebControls.Panel pnlMcModalMsg;
+
+        /// <summary>lblMcModalMsg control.</summary>
+        protected global::System.Web.UI.WebControls.Label lblMcModalMsg;
+
+        /// <summary>fuMultichoice control.</summary>
+        protected global::System.Web.UI.WebControls.FileUpload fuMultichoice;
+
+        /// <summary>btnUploadMc control.</summary>
+        protected global::System.Web.UI.WebControls.Button btnUploadMc;
     }
 }

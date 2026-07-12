@@ -59,7 +59,7 @@
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:BoundField DataField="Partner" HeaderText="Partner" />
-                        <asp:BoundField DataField="PartnerTxnRef" HeaderText="Reference" />
+                        <asp:BoundField DataField="TransactionId" HeaderText="Reference" />
                         <asp:BoundField DataField="SmartCardNumber" HeaderText="Smart card" />
                         <asp:BoundField DataField="CustomerName" HeaderText="Customer" />
                         <asp:BoundField DataField="Package" HeaderText="Package" />

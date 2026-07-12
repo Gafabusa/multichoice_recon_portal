@@ -45,12 +45,18 @@ namespace MultichoiceReconPortal
             litRole.Text = CurrentUser.RoleName;
             litInitials.Text = GetInitials(CurrentUser.FullName);
 
-            // Only the admin sees user management.
-            liUsers.Visible = CurrentUser.IsAdmin;
+            // Role-based navigation.
+            liUpload.Visible = CurrentUser.CanUpload;              // Head Accounts + Accountant (not admin)
+            liAssignments.Visible = CurrentUser.CanAssignPartners; // Head Accounts only
+            liUsers.Visible = CurrentUser.CanManageUsers;          // System Admin only
+            liAudit.Visible = CurrentUser.CanViewAudit;            // System Admin + Head Accounts
         }
 
         protected void btnLogout_Click(object sender, EventArgs e)
         {
+            PortalUser user = Session["User"] as PortalUser;
+            if (user != null) new BusinessLogic().LogAudit(user, "Logout", "Signed out");
+
             FormsAuthentication.SignOut();
             Session.Clear();
             Session.Abandon();

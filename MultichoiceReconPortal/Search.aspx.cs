@@ -33,7 +33,14 @@ namespace MultichoiceReconPortal
         {
             ddlChannel.Items.Clear();
             ddlChannel.Items.Add(new ListItem("All", ""));
-            foreach (string ch in bll.GetChannels())
+
+            PortalUser user = Session["User"] as PortalUser;
+            System.Collections.Generic.IEnumerable<string> channels =
+                (user != null && user.SeesAllData)
+                    ? (System.Collections.Generic.IEnumerable<string>)bll.GetChannels()
+                    : bll.GetAssignedPartnerCodes(user.UserId);
+
+            foreach (string ch in channels)
             {
                 ddlChannel.Items.Add(new ListItem(ch.Trim(), ch.Trim()));
             }
@@ -60,8 +67,9 @@ namespace MultichoiceReconPortal
             string partner = ddlChannel.SelectedValue;
             string status = ddlStatus.SelectedValue;
             string search = txtSearch.Text.Trim();
+            string scope = bll.GetViewScopeCsv(Session["User"] as PortalUser);
 
-            DataTable dt = bll.SearchTransactions(from, to, partner, search);
+            DataTable dt = bll.SearchTransactions(from, to, partner, search, scope);
 
             // Status (RECONCILED / FAILED / PENDING) is computed in the SP; filter on it.
             if (!string.IsNullOrEmpty(status))

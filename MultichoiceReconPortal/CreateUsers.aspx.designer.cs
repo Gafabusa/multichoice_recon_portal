@@ -103,5 +103,29 @@ namespace MultichoiceReconPortal
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnCreate;
+
+        /// <summary>pnlEditForm control.</summary>
+        protected global::System.Web.UI.WebControls.Panel pnlEditForm;
+
+        /// <summary>hfEditUserId control.</summary>
+        protected global::System.Web.UI.WebControls.HiddenField hfEditUserId;
+
+        /// <summary>pnlEditMsg control.</summary>
+        protected global::System.Web.UI.WebControls.Panel pnlEditMsg;
+
+        /// <summary>lblEditMsg control.</summary>
+        protected global::System.Web.UI.WebControls.Label lblEditMsg;
+
+        /// <summary>txtEditFullName control.</summary>
+        protected global::System.Web.UI.WebControls.TextBox txtEditFullName;
+
+        /// <summary>txtEditEmail control.</summary>
+        protected global::System.Web.UI.WebControls.TextBox txtEditEmail;
+
+        /// <summary>ddlEditRole control.</summary>
+        protected global::System.Web.UI.WebControls.DropDownList ddlEditRole;
+
+        /// <summary>btnUpdate control.</summary>
+        protected global::System.Web.UI.WebControls.Button btnUpdate;
     }
 }

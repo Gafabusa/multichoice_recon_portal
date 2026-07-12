@@ -33,7 +33,14 @@ namespace MultichoiceReconPortal
         {
             ddlChannel.Items.Clear();
             ddlChannel.Items.Add(new ListItem("All", ""));
-            foreach (string ch in bll.GetChannels())
+
+            PortalUser user = Session["User"] as PortalUser;
+            System.Collections.Generic.IEnumerable<string> channels =
+                (user != null && user.SeesAllData)
+                    ? (System.Collections.Generic.IEnumerable<string>)bll.GetChannels()
+                    : bll.GetAssignedPartnerCodes(user.UserId);
+
+            foreach (string ch in channels)
             {
                 ddlChannel.Items.Add(new ListItem(ch.Trim(), ch.Trim()));
             }
@@ -63,8 +70,10 @@ namespace MultichoiceReconPortal
             GetRange(out from, out to);
             string bank = ddlChannel.SelectedValue;
 
+            string scope = bll.GetViewScopeCsv(Session["User"] as PortalUser);
+
             long total = 0, recon = 0, failed = 0, unrecon = 0;
-            DataTable stats = bll.GetDashboardStats(from, to);
+            DataTable stats = bll.GetDashboardStats(from, to, scope);
             if (stats.Rows.Count > 0)
             {
                 DataRow r = stats.Rows[0];
@@ -81,7 +90,7 @@ namespace MultichoiceReconPortal
             litRate.Text = (processed > 0 ? (recon * 100m / processed) : 0m).ToString("0.#") + "%";
 
             // transactions - the grid shows the SP's Status (RECONCILED/FAILED/PENDING).
-            DataTable dt = bll.SearchTransactions(from, to, bank, "");
+            DataTable dt = bll.SearchTransactions(from, to, bank, "", scope);
             gvReport.DataSource = dt;
             gvReport.DataBind();
         }
@@ -109,8 +118,9 @@ namespace MultichoiceReconPortal
             DateTime from, to;
             GetRange(out from, out to);
             string bank = ddlChannel.SelectedValue;
+            string scope = bll.GetViewScopeCsv(Session["User"] as PortalUser);
 
-            DataTable all = bll.SearchTransactions(from, to, bank, "");
+            DataTable all = bll.SearchTransactions(from, to, bank, "", scope);
             DataTable dt = all.Clone();
             foreach (DataRow row in all.Rows)
             {
@@ -120,6 +130,8 @@ namespace MultichoiceReconPortal
 
             string csv = BusinessLogic.ToCsv(dt);
             string fileName = label + "_" + from.ToString("yyyyMMdd") + "_" + to.ToString("yyyyMMdd") + ".csv";
+
+            bll.LogAudit(Session["User"] as PortalUser, "Download report", fileName);
 
             Response.Clear();
             Response.ContentType = "text/csv";

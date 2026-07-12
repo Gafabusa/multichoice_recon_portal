@@ -17,6 +17,13 @@ namespace MultichoiceReconPortal
                 Response.Redirect("~/Default.aspx");
                 return;
             }
+            if (!user.CanUpload)
+            {
+                Response.Redirect("~/Dashboard.aspx");
+                return;
+            }
+
+            pnlMultichoiceBtn.Visible = user.CanUploadMultichoice;
 
             if (!IsPostBack)
             {
@@ -27,7 +34,10 @@ namespace MultichoiceReconPortal
 
         private void BindChannels()
         {
-            ddlChannel.DataSource = bll.GetChannels();
+            // Uploaders (Head Accounts and Accountants) upload only for the partners
+            // assigned to them.
+            PortalUser user = Session["User"] as PortalUser;
+            ddlChannel.DataSource = bll.GetAssignedPartnerCodes(user.UserId);
             ddlChannel.DataBind();
         }
 
@@ -45,6 +55,11 @@ namespace MultichoiceReconPortal
                 Response.Redirect("~/Default.aspx");
                 return;
             }
+            if (!user.CanUpload)
+            {
+                Response.Redirect("~/Dashboard.aspx");
+                return;
+            }
 
             if (!fuStatement.HasFile)
             {
@@ -56,6 +71,16 @@ namespace MultichoiceReconPortal
             if (string.IsNullOrEmpty(channel))
             {
                 ShowModalError("Please select a channel.");
+                return;
+            }
+
+            // Guard: don't accept a partner statement until MultiChoice's own
+            // records for that partner have been uploaded (nothing to reconcile against).
+            if (!bll.HasMultichoiceRecordsForPartner(channel))
+            {
+                ShowModalError("This file was not uploaded. There are no MultiChoice records for " + channel +
+                    " yet. Please ask Head Accounts to upload the MultiChoice records for " + channel +
+                    " first, then try again.");
                 return;
             }
 
@@ -84,6 +109,7 @@ namespace MultichoiceReconPortal
 
             if (result.Success)
             {
+                bll.LogAudit(user, "Upload statement", channel + ": " + fuStatement.FileName);
                 if (alreadyReconciled.Count > 0)
                 {
                     int sentForRecon = totalRefs - alreadyReconciled.Count;
@@ -100,6 +126,48 @@ namespace MultichoiceReconPortal
             else
             {
                 ShowModalError(result.Message);
+            }
+        }
+
+        protected void btnUploadMc_Click(object sender, EventArgs e)
+        {
+            PortalUser user = Session["User"] as PortalUser;
+            if (user == null)
+            {
+                Response.Redirect("~/Default.aspx");
+                return;
+            }
+            if (!user.CanUploadMultichoice)
+            {
+                Response.Redirect("~/Dashboard.aspx");
+                return;
+            }
+
+            if (!fuMultichoice.HasFile)
+            {
+                ShowMcModalError("Please choose a MultiChoice records file to upload.");
+                return;
+            }
+
+            UploadResult result;
+            try
+            {
+                result = bll.SaveMultichoiceUpload(fuMultichoice.FileName, fuMultichoice.FileBytes, user.FullName, user.Email);
+            }
+            catch (Exception ex)
+            {
+                ShowMcModalError("Upload failed: " + ex.Message);
+                return;
+            }
+
+            if (result.Success)
+            {
+                bll.LogAudit(user, "Upload MultiChoice records", fuMultichoice.FileName);
+                ShowPageMessage(result.Message, "alert-success");
+            }
+            else
+            {
+                ShowMcModalError(result.Message);
             }
         }
 
@@ -127,6 +195,15 @@ namespace MultichoiceReconPortal
             pnlModalMsg.Visible = true;
             ClientScript.RegisterStartupScript(GetType(), "reopenUpload",
                 "var m=new bootstrap.Modal(document.getElementById('uploadModal'));m.show();", true);
+        }
+
+        private void ShowMcModalError(string message)
+        {
+            lblMcModalMsg.Text = message;
+            pnlMcModalMsg.CssClass = "alert alert-danger py-2 js-modal-alert";
+            pnlMcModalMsg.Visible = true;
+            ClientScript.RegisterStartupScript(GetType(), "reopenMc",
+                "var m=new bootstrap.Modal(document.getElementById('multichoiceModal'));m.show();", true);
         }
     }
 }

@@ -24,5 +24,38 @@ namespace ClassLibrary.EntityObjects
         {
             get { return string.Equals(RoleName, "SystemAdmin", StringComparison.OrdinalIgnoreCase); }
         }
+
+        public bool IsHeadAccounts
+        {
+            get { return string.Equals(RoleName, "HeadAccounts", StringComparison.OrdinalIgnoreCase); }
+        }
+
+        public bool IsAccountant
+        {
+            get { return string.Equals(RoleName, "Accountant", StringComparison.OrdinalIgnoreCase); }
+        }
+
+        // ---- what this user is allowed to do (drives nav + page guards) -------
+
+        /// <summary>Head Accounts and Accountants upload; System Admin never uploads.</summary>
+        public bool CanUpload { get { return IsHeadAccounts || IsAccountant; } }
+
+        /// <summary>Only the System Admin creates/edits/deletes users and adds partners.</summary>
+        public bool CanManageUsers { get { return IsAdmin; } }
+
+        /// <summary>Only the System Admin adds partners to the catalog.</summary>
+        public bool CanManagePartners { get { return IsAdmin; } }
+
+        /// <summary>Only Head Accounts assigns partners to accountants (and self).</summary>
+        public bool CanAssignPartners { get { return IsHeadAccounts; } }
+
+        /// <summary>Head Accounts assigns/uploads the MultiChoice source-of-truth file.</summary>
+        public bool CanUploadMultichoice { get { return IsHeadAccounts; } }
+
+        /// <summary>System Admin and Head Accounts see everything; Accountants are scoped to their partners.</summary>
+        public bool SeesAllData { get { return IsAdmin || IsHeadAccounts; } }
+
+        /// <summary>System Admin and Head Accounts can view the audit log.</summary>
+        public bool CanViewAudit { get { return IsAdmin || IsHeadAccounts; } }
     }
 }

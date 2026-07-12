@@ -17,8 +17,17 @@ namespace MultichoiceReconPortal
         /// <summary>litTopName control (name shown in the top bar).</summary>
         protected global::System.Web.UI.WebControls.Literal litTopName;
 
+        /// <summary>liUpload control (upload menu item; hidden from System Admin).</summary>
+        protected global::System.Web.UI.HtmlControls.HtmlAnchor liUpload;
+
+        /// <summary>liAssignments control (Head Accounts partner-assignment menu item).</summary>
+        protected global::System.Web.UI.HtmlControls.HtmlAnchor liAssignments;
+
         /// <summary>liUsers control (admin-only menu item).</summary>
         protected global::System.Web.UI.HtmlControls.HtmlAnchor liUsers;
+
+        /// <summary>liAudit control (audit-log menu item; System Admin + Head Accounts).</summary>
+        protected global::System.Web.UI.HtmlControls.HtmlAnchor liAudit;
 
         /// <summary>litInitials control.</summary>
         protected global::System.Web.UI.WebControls.Literal litInitials;

@@ -6,7 +6,12 @@
             <h1>Upload Statement</h1>
             <p>Upload a channel statement that didn't arrive by email. It is queued for the reconciliation engine and reconciled under your name.</p>
         </div>
-        <button type="button" class="btn btn-mc btn-lg" onclick="mcOpenModal('uploadModal')">+ Upload Statement</button>
+        <div class="d-flex gap-2">
+            <asp:Panel ID="pnlMultichoiceBtn" runat="server" Visible="false">
+                <button type="button" class="btn btn-outline-secondary btn-lg" onclick="mcOpenModal('multichoiceModal')">+ Upload MultiChoice Records</button>
+            </asp:Panel>
+            <button type="button" class="btn btn-mc btn-lg" onclick="mcOpenModal('uploadModal')">+ Upload Statement</button>
+        </div>
     </div>
 
     <asp:Panel ID="pnlMsg" runat="server" Visible="false" CssClass="alert py-2">
@@ -71,6 +76,38 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline-secondary btn-lg" data-bs-dismiss="modal">Cancel</button>
                         <asp:Button ID="btnUpload" runat="server" CssClass="btn btn-mc btn-lg" Text="Upload statement" OnClick="btnUpload_Click" />
+                    </div>
+                </asp:Panel>
+            </div>
+        </div>
+    </div>
+
+    <!-- MultiChoice records upload modal (Head Accounts only) -->
+    <div class="modal fade" id="multichoiceModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <asp:Panel ID="pnlMcForm" runat="server" DefaultButton="btnUploadMc">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Upload MultiChoice records</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4 mc-form">
+                        <asp:Panel ID="pnlMcModalMsg" runat="server" Visible="false" CssClass="alert alert-danger py-2 js-modal-alert">
+                            <asp:Label ID="lblMcModalMsg" runat="server" />
+                        </asp:Panel>
+                        <div class="mb-3">
+                            <label class="form-label">MultiChoice file</label>
+                            <asp:FileUpload ID="fuMultichoice" runat="server" CssClass="form-control" />
+                            <div class="form-text">
+                                MultiChoice's own records (the source of truth). Columns, in order:
+                                <code>TransactionId, SmartCardNumber, Phone, CustomerName, Package, Amount, Partner, Product, ConnectionDate, SubscriptionEndDate</code>.
+                                Rows whose TransactionId already exists are skipped.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary btn-lg" data-bs-dismiss="modal">Cancel</button>
+                        <asp:Button ID="btnUploadMc" runat="server" CssClass="btn btn-mc btn-lg" Text="Upload records" OnClick="btnUploadMc_Click" />
                     </div>
                 </asp:Panel>
             </div>

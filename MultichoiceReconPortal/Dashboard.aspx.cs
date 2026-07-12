@@ -21,6 +21,8 @@ namespace MultichoiceReconPortal
                 return;
             }
 
+            pnlAddPartnerBtn.Visible = user.CanManagePartners;
+
             if (!IsPostBack)
             {
                 txtFrom.Text = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).ToString("yyyy-MM-dd");
@@ -34,15 +36,74 @@ namespace MultichoiceReconPortal
             LoadDashboard();
         }
 
+        protected void btnAddPartner_Click(object sender, EventArgs e)
+        {
+            PortalUser user = Session["User"] as PortalUser;
+            if (user == null || !user.CanManagePartners)
+            {
+                Response.Redirect("~/Dashboard.aspx");
+                return;
+            }
+
+            string code = txtPartnerCode.Text.Trim();
+            string name = txtPartnerName.Text.Trim();
+
+            if (string.IsNullOrEmpty(code) || string.IsNullOrEmpty(name))
+            {
+                ShowPartnerModalError("Please enter the partner code and name.");
+                return;
+            }
+
+            int result;
+            try
+            {
+                result = bll.AddPartner(code, name);
+            }
+            catch (Exception)
+            {
+                ShowPartnerModalError("We could not add the partner right now. Please try again.");
+                return;
+            }
+
+            if (result == -1)
+            {
+                ShowPartnerModalError("A partner with that code already exists.");
+                return;
+            }
+
+            txtPartnerCode.Text = "";
+            txtPartnerName.Text = "";
+            ShowPartnerMessage("Partner '" + name + "' added.", "alert-success");
+            LoadDashboard();
+        }
+
+        private void ShowPartnerMessage(string message, string cssClass)
+        {
+            lblPartnerMsg.Text = message;
+            pnlPartnerMsg.CssClass = "alert py-2 js-autohide " + cssClass;
+            pnlPartnerMsg.Visible = true;
+        }
+
+        private void ShowPartnerModalError(string message)
+        {
+            lblPartnerModalMsg.Text = message;
+            pnlPartnerModalMsg.CssClass = "alert alert-danger py-2 js-modal-alert";
+            pnlPartnerModalMsg.Visible = true;
+            ClientScript.RegisterStartupScript(GetType(), "reopenAddPartner",
+                "var m=new bootstrap.Modal(document.getElementById('addPartnerModal'));m.show();", true);
+        }
+
         private void LoadDashboard()
         {
             DateTime from, to;
             if (!DateTime.TryParse(txtFrom.Text, out from)) from = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
             if (!DateTime.TryParse(txtTo.Text, out to)) to = DateTime.Today;
 
+            string scope = bll.GetViewScopeCsv(Session["User"] as PortalUser);
+
             long total = 0, recon = 0, failed = 0, unrecon = 0, pending = 0;
             decimal totalAmt = 0, reconAmt = 0;
-            DataTable stats = bll.GetDashboardStats(from, to);
+            DataTable stats = bll.GetDashboardStats(from, to, scope);
             if (stats.Rows.Count > 0)
             {
                 DataRow r = stats.Rows[0];
@@ -68,8 +129,8 @@ namespace MultichoiceReconPortal
             litTotalAmt.Text = isAdmin ? "UGX " + totalAmt.ToString("N0") : "";
             litReconAmt.Text = isAdmin ? "UGX " + reconAmt.ToString("N0") : "";
 
-            DataTable trend = bll.GetDailyTrend(from, to);
-            DataTable channel = bll.GetByChannel(from, to);
+            DataTable trend = bll.GetDailyTrend(from, to, scope);
+            DataTable channel = bll.GetByChannel(from, to, scope);
 
             string trendLabels = "''," + JsLabels(trend, "Day", true);
             string trendRecon = "0," + JsNumbers(trend, "Reconciled");

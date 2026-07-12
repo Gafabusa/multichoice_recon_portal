@@ -81,6 +81,18 @@ namespace ClassLibrary.ControlObjects
             ExecuteNonQuery("SetUserActiveMultichoice", userId, isActive);
         }
 
+        /// <summary>Updates a user's name, email and role. Returns -1 if the email is taken by another user.</summary>
+        public int UpdateUser(int userId, string fullName, string email, int roleId)
+        {
+            DataTable dt = ExecuteDataSet("UpdateUserMultichoice", userId, fullName, email, roleId).Tables[0];
+            return Convert.ToInt32(dt.Rows[0]["UserId"]);
+        }
+
+        public void DeleteUser(int userId)
+        {
+            ExecuteNonQuery("DeleteUserMultichoice", userId);
+        }
+
         public void ChangePassword(int userId, string passwordHash)
         {
             ExecuteNonQuery("ChangeUserPasswordMultichoice", userId, passwordHash);
@@ -102,35 +114,91 @@ namespace ClassLibrary.ControlObjects
             return codes.ToArray();
         }
 
+        public DataTable GetPartners()
+        {
+            return ExecuteDataSet("GetPartners2").Tables[0];
+        }
+
+        // ---- user <-> partner assignments ------------------------------------
+
+        public DataTable GetUserPartners(int userId)
+        {
+            return ExecuteDataSet("GetUserPartnersMultichoice", userId).Tables[0];
+        }
+
+        public void ClearUserPartners(int userId)
+        {
+            ExecuteNonQuery("ClearUserPartnersMultichoice", userId);
+        }
+
+        public void AssignUserPartner(int userId, int partnerId, string assignedBy)
+        {
+            ExecuteNonQuery("AssignUserPartnerMultichoice", userId, partnerId, assignedBy);
+        }
+
+        /// <summary>True if MultiChoice source-of-truth records exist for this partner.</summary>
+        public bool HasMultichoiceRecordsForPartner(string partner)
+        {
+            DataTable dt = ExecuteDataSet("HasMultichoiceRecordsForPartner2", partner).Tables[0];
+            return dt.Rows.Count > 0 && Convert.ToInt32(dt.Rows[0][0]) > 0;
+        }
+
+        /// <summary>Adds a partner to the catalog. Returns -1 if the partner code already exists.</summary>
+        public int InsertPartner(string partnerCode, string partnerName)
+        {
+            DataTable dt = ExecuteDataSet("InsertPartner2", partnerCode, partnerName).Tables[0];
+            return Convert.ToInt32(dt.Rows[0]["PartnerId"]);
+        }
+
         public HashSet<string> GetReconciledRefs(string partner)
         {
             HashSet<string> refs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             DataTable dt = ExecuteDataSet("GetReconciledRefs2", partner).Tables[0];
-            foreach (DataRow dr in dt.Rows) refs.Add(dr["PartnerTxnRef"].ToString());
+            foreach (DataRow dr in dt.Rows) refs.Add(dr["TransactionId"].ToString());
             return refs;
+        }
+
+        // ---- audit log --------------------------------------------------------
+
+        public void InsertAuditLog(int? userId, string userName, string action, string details)
+        {
+            ExecuteNonQuery("InsertAuditLog2",
+                (object)userId ?? DBNull.Value,
+                (object)userName ?? DBNull.Value,
+                action,
+                (object)details ?? DBNull.Value);
+        }
+
+        public DataTable GetAuditLogs(DateTime fromDate, DateTime toDate)
+        {
+            return ExecuteDataSet("GetAuditLogs2", fromDate, toDate).Tables[0];
         }
 
         // ---- recon reporting (read-only) -------------------------------------
 
-        public DataTable GetDashboardStats(DateTime fromDate, DateTime toDate)
+        public DataTable GetDashboardStats(DateTime fromDate, DateTime toDate, string partnersCsv)
         {
-            return ExecuteDataSet("GetReconDashboardStats2", fromDate, toDate).Tables[0];
+            return ExecuteDataSet("GetReconDashboardStats2", fromDate, toDate,
+                (object)partnersCsv ?? DBNull.Value).Tables[0];
         }
 
-        public DataTable GetDailyTrend(DateTime fromDate, DateTime toDate)
+        public DataTable GetDailyTrend(DateTime fromDate, DateTime toDate, string partnersCsv)
         {
-            return ExecuteDataSet("GetReconDailyTrend2", fromDate, toDate).Tables[0];
+            return ExecuteDataSet("GetReconDailyTrend2", fromDate, toDate,
+                (object)partnersCsv ?? DBNull.Value).Tables[0];
         }
 
-        public DataTable GetByChannel(DateTime fromDate, DateTime toDate)
+        public DataTable GetByChannel(DateTime fromDate, DateTime toDate, string partnersCsv)
         {
-            return ExecuteDataSet("GetReconByChannel2", fromDate, toDate).Tables[0];
+            return ExecuteDataSet("GetReconByChannel2", fromDate, toDate,
+                (object)partnersCsv ?? DBNull.Value).Tables[0];
         }
 
-        public DataTable SearchTransactions(DateTime fromDate, DateTime toDate, string partner, string search)
+        public DataTable SearchTransactions(DateTime fromDate, DateTime toDate, string partner, string search, string partnersCsv)
         {
             return ExecuteDataSet("SearchReconTransactions2", fromDate, toDate,
-                (object)partner ?? DBNull.Value, (object)search ?? DBNull.Value).Tables[0];
+                (object)partner ?? DBNull.Value, (object)search ?? DBNull.Value,
+                (object)partnersCsv ?? DBNull.Value).Tables[0];
         }
 
         public DataTable GetRecentStatements(int top)
@@ -141,24 +209,14 @@ namespace ClassLibrary.ControlObjects
         // ---- email ------------------------------------------------------------
 
         /// <summary>
-        /// From address for portal emails. Reuses the service's EmailDetails
-        /// record (id "4"); falls back to the SMTP_FROM app setting.
+        /// From address for portal emails - taken from the service's EmailDetails
+        /// record (id "4"). No email address is hardcoded anywhere.
         /// </summary>
         public string GetEmailFromAddress()
         {
-            try
-            {
-                DataTable dt = ExecuteDataSet("GetEmailDetails2Multichoice", "4").Tables[0];
-                if (dt.Rows.Count > 0 && !string.IsNullOrEmpty(dt.Rows[0]["SMTPUsername"].ToString()))
-                {
-                    return dt.Rows[0]["SMTPUsername"].ToString();
-                }
-            }
-            catch
-            {
-                // fall through to config default
-            }
-            return CommonLogic.ReadAppSetting("SMTP_FROM", "noreply@pegasus.co.ug");
+            DataTable dt = ExecuteDataSet("GetEmailDetails2Multichoice", "4").Tables[0];
+            if (dt.Rows.Count > 0) return dt.Rows[0]["SMTPUsername"].ToString();
+            return "";
         }
 
         /// <summary>

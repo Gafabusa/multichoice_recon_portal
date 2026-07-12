@@ -123,6 +123,51 @@ namespace ClassLibrary.ControlObjects
             db.SetUserActive(userId, isActive);
         }
 
+        /// <summary>Updates a user's name, email and role. Returns -1 if the email belongs to another user.</summary>
+        public int UpdateUser(int userId, string fullName, string email, int roleId)
+        {
+            return db.UpdateUser(userId, fullName, email, roleId);
+        }
+
+        public void DeleteUser(int userId)
+        {
+            db.DeleteUser(userId);
+        }
+
+        // ---- partner catalog (system admin) ----------------------------------
+
+        public DataTable GetPartners()
+        {
+            return db.GetPartners();
+        }
+
+        /// <summary>Adds a partner. Returns -1 if the partner code already exists.</summary>
+        public int AddPartner(string partnerCode, string partnerName)
+        {
+            return db.InsertPartner(partnerCode, partnerName);
+        }
+
+        // ---- audit log --------------------------------------------------------
+
+        /// <summary>Records an action in the audit log. Never throws (auditing must not break the action).</summary>
+        public void LogAudit(PortalUser user, string action, string details)
+        {
+            try
+            {
+                db.InsertAuditLog(user != null ? (int?)user.UserId : null,
+                    user != null ? user.FullName : null, action, details);
+            }
+            catch
+            {
+                // auditing is best-effort; never surface an audit failure to the user
+            }
+        }
+
+        public DataTable GetAuditLogs(DateTime fromDate, DateTime toDate)
+        {
+            return db.GetAuditLogs(fromDate, toDate);
+        }
+
         // ---- manual upload ---------------------------------------------------
 
         /// <summary>Partners the portal accepts manual uploads for (from the Partners table).</summary>
@@ -186,6 +231,50 @@ namespace ClassLibrary.ControlObjects
         }
 
         /// <summary>
+        /// Drops a MultiChoice source-of-truth file into MULTICHOICE_RAW_FOLDER with a
+        /// sidecar carrying the uploader's name/email. The service's MultiChoice thread
+        /// imports it into ReceivedTransactionMultichoice.
+        /// </summary>
+        public UploadResult SaveMultichoiceUpload(string fileName, byte[] content, string uploaderName, string uploaderEmail)
+        {
+            UploadResult result = new UploadResult();
+            try
+            {
+                string dir = CommonLogic.ReadAppSetting("MULTICHOICE_RAW_FOLDER");
+                Directory.CreateDirectory(dir);
+
+                string safeName = Path.GetFileName(fileName);
+                string dest = Path.Combine(dir, safeName);
+                if (File.Exists(dest))
+                {
+                    string baseName = Path.GetFileNameWithoutExtension(safeName);
+                    string ext = Path.GetExtension(safeName);
+                    safeName = baseName + "_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ext;
+                    dest = Path.Combine(dir, safeName);
+                }
+
+                File.WriteAllBytes(dest, content);
+
+                string meta =
+                    "uploadedby=" + uploaderName + "\r\n" +
+                    "email=" + uploaderEmail + "\r\n" +
+                    "source=MULTICHOICE\r\n" +
+                    "uploadedon=" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                File.WriteAllText(dest + ".meta", meta);
+
+                result.Success = true;
+                result.SavedFilePath = dest;
+                result.Message = "MultiChoice records uploaded successfully. They will be imported shortly.";
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Upload failed: " + ex.Message;
+            }
+            return result;
+        }
+
+        /// <summary>
         /// Returns the references in the uploaded file that were already reconciled
         /// for this partner. totalRefs returns the count of distinct references found.
         /// </summary>
@@ -207,7 +296,8 @@ namespace ClassLibrary.ControlObjects
                     line = line.Trim();
                     if (line.Length == 0) continue;
                     string reference = line.Split(',')[0].Trim();
-                    if (first && reference.Equals("PartnerTxnRef", StringComparison.OrdinalIgnoreCase)) { first = false; continue; }
+                    if (first && (reference.Equals("TransactionId", StringComparison.OrdinalIgnoreCase) ||
+                                  reference.Equals("PartnerTxnRef", StringComparison.OrdinalIgnoreCase))) { first = false; continue; }
                     first = false;
                     if (reference.Length == 0 || !distinct.Add(reference)) continue;
                     if (reconciled.Contains(reference)) duplicates.Add(reference);
@@ -219,24 +309,64 @@ namespace ClassLibrary.ControlObjects
 
         // ---- reporting (read-only) -------------------------------------------
 
-        public DataTable GetDashboardStats(DateTime fromDate, DateTime toDate)
+        public DataTable GetDashboardStats(DateTime fromDate, DateTime toDate, string partnersCsv)
         {
-            return db.GetDashboardStats(fromDate, toDate);
+            return db.GetDashboardStats(fromDate, toDate, partnersCsv);
         }
 
-        public DataTable GetDailyTrend(DateTime fromDate, DateTime toDate)
+        public DataTable GetDailyTrend(DateTime fromDate, DateTime toDate, string partnersCsv)
         {
-            return db.GetDailyTrend(fromDate, toDate);
+            return db.GetDailyTrend(fromDate, toDate, partnersCsv);
         }
 
-        public DataTable GetByChannel(DateTime fromDate, DateTime toDate)
+        public DataTable GetByChannel(DateTime fromDate, DateTime toDate, string partnersCsv)
         {
-            return db.GetByChannel(fromDate, toDate);
+            return db.GetByChannel(fromDate, toDate, partnersCsv);
         }
 
-        public DataTable SearchTransactions(DateTime fromDate, DateTime toDate, string partner, string search)
+        public DataTable SearchTransactions(DateTime fromDate, DateTime toDate, string partner, string search, string partnersCsv)
         {
-            return db.SearchTransactions(fromDate, toDate, partner, search);
+            return db.SearchTransactions(fromDate, toDate, partner, search, partnersCsv);
+        }
+
+        // ---- partner assignment + scoping ------------------------------------
+
+        public DataTable GetUserPartners(int userId)
+        {
+            return db.GetUserPartners(userId);
+        }
+
+        /// <summary>The partner codes assigned to a user.</summary>
+        public List<string> GetAssignedPartnerCodes(int userId)
+        {
+            List<string> codes = new List<string>();
+            DataTable dt = db.GetUserPartners(userId);
+            foreach (DataRow dr in dt.Rows) codes.Add(dr["PartnerCode"].ToString());
+            return codes;
+        }
+
+        /// <summary>
+        /// The partner-scope CSV to pass to the reporting procs for this user:
+        /// null for users who see everything (System Admin, Head Accounts), otherwise
+        /// the accountant's assigned codes (an empty string means "see nothing").
+        /// </summary>
+        public string GetViewScopeCsv(PortalUser user)
+        {
+            if (user == null || user.SeesAllData) return null;
+            return string.Join(",", GetAssignedPartnerCodes(user.UserId));
+        }
+
+        /// <summary>Replaces a user's partner assignments with the given partner ids.</summary>
+        public void SaveUserPartners(int userId, IEnumerable<int> partnerIds, string assignedBy)
+        {
+            db.ClearUserPartners(userId);
+            if (partnerIds == null) return;
+            foreach (int pid in partnerIds) db.AssignUserPartner(userId, pid, assignedBy);
+        }
+
+        public bool HasMultichoiceRecordsForPartner(string partner)
+        {
+            return db.HasMultichoiceRecordsForPartner(partner);
         }
 
         /// <summary>Renders a DataTable to CSV (for the SUCCESS/FAILED excel downloads).</summary>

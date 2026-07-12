@@ -42,6 +42,33 @@ namespace MultichoiceReconPortal
         protected global::System.Web.UI.WebControls.Button btnApply;
 
         /// <summary>
+        /// pnlAddPartnerBtn control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlAddPartnerBtn;
+
+        /// <summary>
+        /// pnlPartnerMsg control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlPartnerMsg;
+
+        /// <summary>
+        /// lblPartnerMsg control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblPartnerMsg;
+
+        /// <summary>
         /// litTotal control.
         /// </summary>
         /// <remarks>
@@ -112,6 +139,60 @@ namespace MultichoiceReconPortal
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal litUnrecon;
+
+        /// <summary>
+        /// pnlPartnerForm control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlPartnerForm;
+
+        /// <summary>
+        /// pnlPartnerModalMsg control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlPartnerModalMsg;
+
+        /// <summary>
+        /// lblPartnerModalMsg control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblPartnerModalMsg;
+
+        /// <summary>
+        /// txtPartnerCode control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtPartnerCode;
+
+        /// <summary>
+        /// txtPartnerName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtPartnerName;
+
+        /// <summary>
+        /// btnAddPartner control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnAddPartner;
 
         /// <summary>
         /// litChartScript control.

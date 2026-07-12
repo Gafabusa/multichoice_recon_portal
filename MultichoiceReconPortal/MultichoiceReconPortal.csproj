@@ -117,6 +117,8 @@
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="Content\Site.css" />
+    <Content Include="Assignments.aspx" />
+    <Content Include="AuditLog.aspx" />
     <Content Include="CreateUsers.aspx" />
     <Content Include="Dashboard.aspx" />
     <Content Include="Scripts\chart.min.js" />
@@ -196,6 +198,20 @@
     </Compile>
     <Compile Include="ChangePassword.aspx.designer.cs">
       <DependentUpon>ChangePassword.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Assignments.aspx.cs">
+      <DependentUpon>Assignments.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Assignments.aspx.designer.cs">
+      <DependentUpon>Assignments.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AuditLog.aspx.cs">
+      <DependentUpon>AuditLog.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AuditLog.aspx.designer.cs">
+      <DependentUpon>AuditLog.aspx</DependentUpon>
     </Compile>
     <Compile Include="CreateUsers.aspx.cs">
       <DependentUpon>CreateUsers.aspx</DependentUpon>

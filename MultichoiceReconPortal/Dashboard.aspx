@@ -16,8 +16,15 @@
                 <asp:TextBox ID="txtTo" runat="server" CssClass="form-control form-control-sm" TextMode="Date" />
             </div>
             <asp:Button ID="btnApply" runat="server" CssClass="btn btn-mc btn-sm" Text="Apply" OnClick="btnApply_Click" />
+            <asp:Panel ID="pnlAddPartnerBtn" runat="server" Visible="false">
+                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="mcOpenModal('addPartnerModal')">+ Add Partner</button>
+            </asp:Panel>
         </div>
     </div>
+
+    <asp:Panel ID="pnlPartnerMsg" runat="server" Visible="false" CssClass="alert py-2">
+        <asp:Label ID="lblPartnerMsg" runat="server" />
+    </asp:Panel>
 
     <div class="row g-3 mb-4">
         <div class="col-md-3 col-sm-6">
@@ -72,6 +79,38 @@
                         <div id="chartChannelBox" class="mc-chartbox tall"><canvas id="chartChannel"></canvas></div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Partner modal (System Admin) -->
+    <div class="modal fade" id="addPartnerModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <asp:Panel ID="pnlPartnerForm" runat="server" DefaultButton="btnAddPartner">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add a partner</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4 mc-form">
+                        <asp:Panel ID="pnlPartnerModalMsg" runat="server" Visible="false" CssClass="alert alert-danger py-2 js-modal-alert">
+                            <asp:Label ID="lblPartnerModalMsg" runat="server" />
+                        </asp:Panel>
+                        <div class="mb-3">
+                            <label class="form-label">Partner code</label>
+                            <asp:TextBox ID="txtPartnerCode" runat="server" CssClass="form-control" MaxLength="30" />
+                            <div class="text-muted small mt-1">Short code used on files and folders (e.g. MTN, AIRTEL, STANBIC).</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Partner name</label>
+                            <asp:TextBox ID="txtPartnerName" runat="server" CssClass="form-control" MaxLength="100" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary btn-lg" data-bs-dismiss="modal">Cancel</button>
+                        <asp:Button ID="btnAddPartner" runat="server" CssClass="btn btn-mc btn-lg" Text="Add Partner" OnClick="btnAddPartner_Click" />
+                    </div>
+                </asp:Panel>
             </div>
         </div>
     </div>
