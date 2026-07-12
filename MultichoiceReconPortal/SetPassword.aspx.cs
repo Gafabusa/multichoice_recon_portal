@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace MultichoiceReconPortal
 {
-    public partial class ChangePassword : Page
+    public partial class SetPassword : Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -16,7 +16,12 @@ namespace MultichoiceReconPortal
                 Response.Redirect("~/Default.aspx");
                 return;
             }
-
+            // Only reachable while a password change is still pending.
+            if (!user.MustChangePassword)
+            {
+                Response.Redirect("~/Dashboard.aspx");
+                return;
+            }
         }
 
         protected void btnSave_Click(object sender, EventArgs e)
@@ -34,31 +39,27 @@ namespace MultichoiceReconPortal
 
             if (string.IsNullOrEmpty(current) || string.IsNullOrEmpty(newPass) || string.IsNullOrEmpty(confirm))
             {
-                ShowMessage("Please fill in all three fields.", "alert-danger");
+                ShowMessage("Please fill in all three fields.");
                 return;
             }
-
             if (!string.Equals(CommonLogic.Md5Hash(current), user.Password, StringComparison.OrdinalIgnoreCase))
             {
-                ShowMessage("Your current password is incorrect.", "alert-danger");
+                ShowMessage("Your current password is incorrect.");
                 return;
             }
-
             if (newPass.Length < 6)
             {
-                ShowMessage("The new password must be at least 6 characters.", "alert-danger");
+                ShowMessage("The new password must be at least 6 characters.");
                 return;
             }
-
             if (newPass != confirm)
             {
-                ShowMessage("The new password and confirmation do not match.", "alert-danger");
+                ShowMessage("The new password and confirmation do not match.");
                 return;
             }
-
             if (string.Equals(CommonLogic.Md5Hash(newPass), user.Password, StringComparison.OrdinalIgnoreCase))
             {
-                ShowMessage("The new password must be different from the current one.", "alert-danger");
+                ShowMessage("The new password must be different from the temporary one.");
                 return;
             }
 
@@ -68,22 +69,22 @@ namespace MultichoiceReconPortal
             }
             catch (Exception)
             {
-                ShowMessage("We could not update your password right now. Please try again.", "alert-danger");
+                ShowMessage("We could not set your password right now. Please try again.");
                 return;
             }
 
-            // Always sign the user out after a password change and make them log in
-            // again with the new password.
+            // Sign out and make them log in again with the new password before they
+            // can reach the dashboard.
             FormsAuthentication.SignOut();
             Session.Clear();
             Session.Abandon();
             Response.Redirect("~/Default.aspx?changed=1");
         }
 
-        private void ShowMessage(string message, string cssClass)
+        private void ShowMessage(string message)
         {
             lblMsg.Text = message;
-            pnlMsg.CssClass = "alert py-2 js-autohide " + cssClass;
+            pnlMsg.CssClass = "alert alert-danger py-2 js-autohide";
             pnlMsg.Visible = true;
         }
     }

@@ -141,9 +141,13 @@ namespace MultichoiceReconPortal
             string chFailed = JsNumbers(channel, "Failed");
             string chUnrecon = JsNumbers(channel, "Unreconciled");
 
+            // Keep the chart full width so the horizontal gridlines span the whole
+            // area, and pad empty slots on the RIGHT so the partner groups start at
+            // the y-axis (left) instead of being centred. Many partners -> scroll.
             int realPartners = channel.Rows.Count;
-            int channelSlots = realPartners < 8 ? 8 : realPartners;
-            for (int i = realPartners; i < channelSlots; i++)
+            bool fewPartners = realPartners <= 12;
+            int totalSlots = fewPartners ? 12 : realPartners;
+            for (int i = realPartners; i < totalSlots; i++)
             {
                 chLabels += (chLabels.Length > 0 ? "," : "") + "''";
                 chRecon += (chRecon.Length > 0 ? "," : "") + "null";
@@ -166,16 +170,16 @@ namespace MultichoiceReconPortal
              .Append("],borderColor:'#f0ad4e',tension:.25,fill:false,borderWidth:3,pointRadius:0,pointHoverRadius:5}]},")
              .Append("options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},layout:{padding:{right:32,top:16}},plugins:{legend:{position:'bottom'},tooltip:{enabled:true}},scales:{x:{offset:false,grid:{display:false}},y:{beginAtZero:true,min:0,grace:'18%',ticks:{precision:0}}}}});");
 
-            if (channelSlots > 14)
-                s.Append("var chBox=document.getElementById('chartChannelBox');if(chBox){chBox.style.width='").Append(channelSlots * 110).Append("px';}");
+            if (fewPartners)
+                s.Append("var chBox=document.getElementById('chartChannelBox');if(chBox){chBox.style.width='100%';chBox.style.margin='0';}");
             else
-                s.Append("var chBox=document.getElementById('chartChannelBox');if(chBox){chBox.style.width='100%';}");
+                s.Append("var chBox=document.getElementById('chartChannelBox');if(chBox){chBox.style.width='").Append(realPartners * 90).Append("px';chBox.style.margin='0';}");
             s.Append("new Chart(document.getElementById('chartChannel'),{type:'bar',data:{labels:[").Append(chLabels)
              .Append("],datasets:[{label:'Reconciled',data:[").Append(chRecon)
-             .Append("],backgroundColor:'#10664a',barThickness:16},{label:'Failed',data:[").Append(chFailed)
-             .Append("],backgroundColor:'#e2001a',barThickness:16},{label:'Unreconciled',data:[").Append(chUnrecon)
-             .Append("],backgroundColor:'#f0ad4e',barThickness:16}]},")
-             .Append("options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},scales:{x:{grid:{display:false},ticks:{autoSkip:false,maxRotation:0,minRotation:0}},y:{beginAtZero:true,min:0,ticks:{precision:0}}}}});");
+             .Append("],backgroundColor:'#10664a',categoryPercentage:0.7,barPercentage:0.9,maxBarThickness:30},{label:'Failed',data:[").Append(chFailed)
+             .Append("],backgroundColor:'#e2001a',categoryPercentage:0.7,barPercentage:0.9,maxBarThickness:30},{label:'Unreconciled',data:[").Append(chUnrecon)
+             .Append("],backgroundColor:'#f0ad4e',categoryPercentage:0.7,barPercentage:0.9,maxBarThickness:30}]},")
+             .Append("options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},scales:{x:{grid:{display:false},ticks:{autoSkip:false,maxRotation:0,minRotation:0}},y:{beginAtZero:true,min:0,ticks:{precision:0},grid:{display:true}}}}});");
             s.Append("})();</script>");
             litChartScript.Text = s.ToString();
         }

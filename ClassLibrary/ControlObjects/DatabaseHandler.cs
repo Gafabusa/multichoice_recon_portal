@@ -98,6 +98,25 @@ namespace ClassLibrary.ControlObjects
             ExecuteNonQuery("ChangeUserPasswordMultichoice", userId, passwordHash);
         }
 
+        // ---- password reset by OTP -------------------------------------------
+
+        /// <summary>Stores the encrypted OTP + expiry on the user. Returns the UserId, or 0 if no active user has that email.</summary>
+        public int SetPasswordResetOtp(string email, string otpEncrypted, DateTime expiry)
+        {
+            DataTable dt = ExecuteDataSet("SetPasswordResetOtpMultichoice", email, otpEncrypted, expiry).Tables[0];
+            return dt.Rows.Count > 0 ? Convert.ToInt32(dt.Rows[0]["UserId"]) : 0;
+        }
+
+        public DataTable GetPasswordResetInfo(string email)
+        {
+            return ExecuteDataSet("GetPasswordResetOtpMultichoice", email).Tables[0];
+        }
+
+        public void CompletePasswordReset(int userId, string passwordHash)
+        {
+            ExecuteNonQuery("CompletePasswordResetMultichoice", userId, passwordHash);
+        }
+
         public void ResetPassword(int userId, string passwordHash)
         {
             ExecuteNonQuery("ResetUserPasswordMultichoice", userId, passwordHash);
@@ -169,9 +188,9 @@ namespace ClassLibrary.ControlObjects
                 (object)details ?? DBNull.Value);
         }
 
-        public DataTable GetAuditLogs(DateTime fromDate, DateTime toDate)
+        public DataTable GetAuditLogs(DateTime fromDate, DateTime toDate, bool includeAdmin)
         {
-            return ExecuteDataSet("GetAuditLogs2", fromDate, toDate).Tables[0];
+            return ExecuteDataSet("GetAuditLogs2", fromDate, toDate, includeAdmin).Tables[0];
         }
 
         // ---- recon reporting (read-only) -------------------------------------

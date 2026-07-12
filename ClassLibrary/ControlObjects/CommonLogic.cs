@@ -66,6 +66,77 @@ namespace ClassLibrary.ControlObjects
             }
         }
 
+        // Fixed key for encrypting the password-reset OTP at rest (never stored in
+        // plain text). A 256-bit AES key is derived from this passphrase.
+        private const string OtpKey = "Umeme2501PegPay";
+
+        /// <summary>A random 6-digit one-time password.</summary>
+        public static string GenerateOtp()
+        {
+            byte[] data = new byte[4];
+            using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
+            {
+                rng.GetBytes(data);
+            }
+            uint value = BitConverter.ToUInt32(data, 0) % 1000000u;
+            return value.ToString("D6");
+        }
+
+        /// <summary>AES-encrypts a value with the OTP key; returns base64(IV + cipher).</summary>
+        public static string EncryptOtp(string plainText)
+        {
+            byte[] plain = Encoding.UTF8.GetBytes(plainText ?? string.Empty);
+            using (Aes aes = Aes.Create())
+            {
+                aes.Key = OtpKeyBytes();
+                aes.GenerateIV();
+                using (ICryptoTransform encryptor = aes.CreateEncryptor())
+                {
+                    byte[] cipher = encryptor.TransformFinalBlock(plain, 0, plain.Length);
+                    byte[] result = new byte[aes.IV.Length + cipher.Length];
+                    Buffer.BlockCopy(aes.IV, 0, result, 0, aes.IV.Length);
+                    Buffer.BlockCopy(cipher, 0, result, aes.IV.Length, cipher.Length);
+                    return Convert.ToBase64String(result);
+                }
+            }
+        }
+
+        /// <summary>Reverses <see cref="EncryptOtp"/>; returns "" if the value can't be decrypted.</summary>
+        public static string DecryptOtp(string encrypted)
+        {
+            if (string.IsNullOrEmpty(encrypted)) return "";
+            try
+            {
+                byte[] all = Convert.FromBase64String(encrypted);
+                using (Aes aes = Aes.Create())
+                {
+                    aes.Key = OtpKeyBytes();
+                    byte[] iv = new byte[16];
+                    Buffer.BlockCopy(all, 0, iv, 0, iv.Length);
+                    aes.IV = iv;
+                    using (ICryptoTransform decryptor = aes.CreateDecryptor())
+                    {
+                        byte[] cipher = new byte[all.Length - iv.Length];
+                        Buffer.BlockCopy(all, iv.Length, cipher, 0, cipher.Length);
+                        byte[] plain = decryptor.TransformFinalBlock(cipher, 0, cipher.Length);
+                        return Encoding.UTF8.GetString(plain);
+                    }
+                }
+            }
+            catch
+            {
+                return "";
+            }
+        }
+
+        private static byte[] OtpKeyBytes()
+        {
+            using (SHA256 sha = SHA256.Create())
+            {
+                return sha.ComputeHash(Encoding.UTF8.GetBytes(OtpKey));
+            }
+        }
+
         /// <summary>
         /// Generates a readable random password for new/reset users.
         /// Excludes ambiguous characters (0/O, 1/l/I).

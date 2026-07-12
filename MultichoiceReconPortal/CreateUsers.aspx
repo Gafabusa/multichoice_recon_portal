@@ -45,9 +45,6 @@
                                 <div class="d-flex flex-wrap gap-1">
                                     <asp:LinkButton runat="server" CssClass="btn btn-sm btn-outline-primary"
                                         CommandName="EditUser" CommandArgument="<%# Container.DataItemIndex %>" Text="Edit" />
-                                    <asp:LinkButton runat="server" CssClass="btn btn-sm btn-outline-secondary"
-                                        CommandName="ResetPwd" CommandArgument="<%# Container.DataItemIndex %>" Text="Reset password"
-                                        OnClientClick="return confirm('Reset this user\'s password and email them a new temporary one?');" />
                                     <asp:LinkButton runat="server" CssClass='<%# "btn btn-sm " + (Convert.ToBoolean(Eval("IsActive")) ? "btn-outline-danger" : "btn-outline-success") %>'
                                         CommandName="ToggleActive" CommandArgument="<%# Container.DataItemIndex %>"
                                         Text='<%# Convert.ToBoolean(Eval("IsActive")) ? "Disable" : "Enable" %>' />

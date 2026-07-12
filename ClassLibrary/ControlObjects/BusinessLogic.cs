@@ -50,6 +50,71 @@ namespace ClassLibrary.ControlObjects
             db.ChangePassword(userId, CommonLogic.Md5Hash(newPassword));
         }
 
+        // ---- forgot password (OTP) -------------------------------------------
+
+        /// <summary>
+        /// Starts a password reset: generates a 6-digit OTP, stores it encrypted with
+        /// a 5-minute expiry, and emails it. Returns false if no active user has that
+        /// email (the page shows the same message either way, to avoid leaking accounts).
+        /// </summary>
+        public bool StartPasswordReset(string email)
+        {
+            PortalUser user = db.GetUserByEmail(email);
+            if (user == null || !user.IsActive) return false;
+
+            string otp = CommonLogic.GenerateOtp();
+            string encrypted = CommonLogic.EncryptOtp(otp);
+            db.SetPasswordResetOtp(email, encrypted, DateTime.Now.AddMinutes(5));
+
+            SendOtpEmail(email, user.FullName, otp);
+            return true;
+        }
+
+        /// <summary>
+        /// Verifies the OTP and sets the new password. Returns null on success, or a
+        /// user-facing error message on failure.
+        /// </summary>
+        public string CompletePasswordReset(string email, string otp, string newPassword)
+        {
+            DataTable dt = db.GetPasswordResetInfo(email);
+            if (dt.Rows.Count == 0) return "We could not find an active account for that email.";
+
+            DataRow r = dt.Rows[0];
+            string storedEnc = r["ResetOtp"] == DBNull.Value ? "" : r["ResetOtp"].ToString();
+            if (string.IsNullOrEmpty(storedEnc))
+                return "No reset request was found. Please request a new code.";
+
+            if (r["ResetOtpExpiry"] == DBNull.Value || Convert.ToDateTime(r["ResetOtpExpiry"]) < DateTime.Now)
+                return "The code has expired. Please request a new one.";
+
+            string storedOtp = CommonLogic.DecryptOtp(storedEnc);
+            if (string.IsNullOrEmpty(storedOtp) || storedOtp != (otp ?? "").Trim())
+                return "The code you entered is incorrect.";
+
+            db.CompletePasswordReset(Convert.ToInt32(r["UserId"]), CommonLogic.Md5Hash(newPassword));
+            return null;
+        }
+
+        private void SendOtpEmail(string toEmail, string fullName, string otp)
+        {
+            string from = db.GetEmailFromAddress();
+            string server = CommonLogic.ReadAppSetting("SMTP_SERVER", "smtp-relay.gmail.com");
+            int port;
+            if (!int.TryParse(CommonLogic.ReadAppSetting("SMTP_PORT", "587"), out port)) port = 587;
+
+            string body =
+                "<div style='font-family:Segoe UI,Arial,sans-serif;color:#1f2a44;font-size:14px'>" +
+                "<h2 style='color:#10664a;margin:0 0 12px'>MultiChoice Reconciliation Portal</h2>" +
+                "<p>Hello " + fullName + ",</p>" +
+                "<p>Use the one-time code below to reset your password. It expires in 5 minutes.</p>" +
+                "<p style='font-size:26px;font-weight:700;letter-spacing:4px;background:#eef4f1;border-radius:8px;padding:12px 14px;text-align:center'>" + otp + "</p>" +
+                "<p>If you did not request this, you can ignore this email.</p>" +
+                "<p style='color:#7a869a;font-size:12px'>This is an automated message, please do not reply.</p>" +
+                "</div>";
+
+            CommonLogic.SendEmail(server, port, from, toEmail, "Your password reset code", body, true);
+        }
+
         // ---- user management (admin) -----------------------------------------
 
         /// <summary>
@@ -163,9 +228,14 @@ namespace ClassLibrary.ControlObjects
             }
         }
 
-        public DataTable GetAuditLogs(DateTime fromDate, DateTime toDate)
+        /// <summary>
+        /// Audit entries for a date range. System Admin sees everything; anyone else
+        /// (Head Accounts) sees only Accountant and Head Accounts activity - never the
+        /// System Admin's.
+        /// </summary>
+        public DataTable GetAuditLogs(DateTime fromDate, DateTime toDate, bool includeAdmin)
         {
-            return db.GetAuditLogs(fromDate, toDate);
+            return db.GetAuditLogs(fromDate, toDate, includeAdmin);
         }
 
         // ---- manual upload ---------------------------------------------------
@@ -345,15 +415,22 @@ namespace ClassLibrary.ControlObjects
             return codes;
         }
 
+        // A partner code that can never exist, used to scope an accountant who has no
+        // assignments to zero rows (the reporting procs treat NULL/'' as "all", so an
+        // empty scope would otherwise leak everything).
+        private const string NoPartnersSentinel = "__NONE__";
+
         /// <summary>
         /// The partner-scope CSV to pass to the reporting procs for this user:
-        /// null for users who see everything (System Admin, Head Accounts), otherwise
-        /// the accountant's assigned codes (an empty string means "see nothing").
+        /// null for users who see everything (System Admin, Head Accounts); the
+        /// accountant's assigned codes otherwise; and a sentinel that matches nothing
+        /// when an accountant has no assigned partners.
         /// </summary>
         public string GetViewScopeCsv(PortalUser user)
         {
             if (user == null || user.SeesAllData) return null;
-            return string.Join(",", GetAssignedPartnerCodes(user.UserId));
+            List<string> codes = GetAssignedPartnerCodes(user.UserId);
+            return codes.Count == 0 ? NoPartnersSentinel : string.Join(",", codes);
         }
 
         /// <summary>Replaces a user's partner assignments with the given partner ids.</summary>

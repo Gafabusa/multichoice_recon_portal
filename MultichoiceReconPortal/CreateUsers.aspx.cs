@@ -133,26 +133,6 @@ namespace MultichoiceReconPortal
                     OpenEditModal();
                     return;
 
-                case "ResetPwd":
-                    try
-                    {
-                        string tempPassword = bll.ResetPassword(userId);
-                        try
-                        {
-                            bll.SendCredentialsEmail(email, fullName, tempPassword, true);
-                            ShowPageMessage("Password reset. A new temporary password has been emailed to " + email + ".", "alert-success");
-                        }
-                        catch (Exception)
-                        {
-                            ShowPageMessage("Password reset, but the email could not be sent. Temporary password: " + tempPassword, "alert-warning");
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        ShowPageMessage("We could not reset the password right now. Please try again.", "alert-danger");
-                    }
-                    break;
-
                 case "ToggleActive":
                     if (isSelf)
                     {

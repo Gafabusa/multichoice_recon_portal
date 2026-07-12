@@ -51,7 +51,10 @@ namespace MultichoiceReconPortal
             if (!DateTime.TryParse(txtFrom.Text, out from)) from = DateTime.Today.AddDays(-1);
             if (!DateTime.TryParse(txtTo.Text, out to)) to = DateTime.Today;
 
-            gvAudit.DataSource = bll.GetAuditLogs(from, to);
+            PortalUser user = Session["User"] as PortalUser;
+            bool includeAdmin = user != null && user.IsAdmin;
+
+            gvAudit.DataSource = bll.GetAuditLogs(from, to, includeAdmin);
             gvAudit.DataBind();
         }
     }

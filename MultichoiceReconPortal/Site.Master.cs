@@ -31,12 +31,11 @@ namespace MultichoiceReconPortal
                 return;
             }
 
-            // First login (or admin reset): the user MUST change their password
-            // before they can reach any other page.
-            string currentFile = System.IO.Path.GetFileName(Request.Path ?? "").ToLower();
-            if (CurrentUser.MustChangePassword && !currentFile.Contains("changepassword"))
+            // First login: the user MUST set a new password on the standalone page
+            // before they can reach any page that uses this master (dashboard, etc.).
+            if (CurrentUser.MustChangePassword)
             {
-                Response.Redirect("~/ChangePassword.aspx");
+                Response.Redirect("~/SetPassword.aspx");
                 return;
             }
 

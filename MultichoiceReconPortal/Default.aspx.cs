@@ -64,7 +64,7 @@ namespace MultichoiceReconPortal
 
             if (user.MustChangePassword)
             {
-                Response.Redirect("~/ChangePassword.aspx");
+                Response.Redirect("~/SetPassword.aspx");
             }
             else
             {

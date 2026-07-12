@@ -17,16 +17,22 @@ namespace MultichoiceReconPortal
         /// <summary>lblMsg control.</summary>
         protected global::System.Web.UI.WebControls.Label lblMsg;
 
-        /// <summary>ddlUser control.</summary>
-        protected global::System.Web.UI.WebControls.DropDownList ddlUser;
+        /// <summary>gvUsers control.</summary>
+        protected global::System.Web.UI.WebControls.GridView gvUsers;
 
-        /// <summary>pnlPartners control.</summary>
-        protected global::System.Web.UI.WebControls.Panel pnlPartners;
+        /// <summary>pnlAssign control.</summary>
+        protected global::System.Web.UI.WebControls.Panel pnlAssign;
+
+        /// <summary>litAssignUser control.</summary>
+        protected global::System.Web.UI.WebControls.Literal litAssignUser;
+
+        /// <summary>hfUserId control.</summary>
+        protected global::System.Web.UI.WebControls.HiddenField hfUserId;
 
         /// <summary>cblPartners control.</summary>
         protected global::System.Web.UI.WebControls.CheckBoxList cblPartners;
 
-        /// <summary>btnSave control.</summary>
-        protected global::System.Web.UI.WebControls.Button btnSave;
+        /// <summary>btnSaveAssign control.</summary>
+        protected global::System.Web.UI.WebControls.Button btnSaveAssign;
     }
 }

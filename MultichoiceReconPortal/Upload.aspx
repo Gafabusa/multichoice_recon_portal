@@ -98,11 +98,7 @@
                         <div class="mb-3">
                             <label class="form-label">MultiChoice file</label>
                             <asp:FileUpload ID="fuMultichoice" runat="server" CssClass="form-control" />
-                            <div class="form-text">
-                                MultiChoice's own records (the source of truth). Columns, in order:
-                                <code>TransactionId, SmartCardNumber, Phone, CustomerName, Package, Amount, Partner, Product, ConnectionDate, SubscriptionEndDate</code>.
-                                Rows whose TransactionId already exists are skipped.
-                            </div>
+                            <div class="form-text">Upload the MultiChoice records file exactly as received (.csv).</div>
                         </div>
                     </div>
                     <div class="modal-footer">

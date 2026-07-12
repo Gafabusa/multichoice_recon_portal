@@ -3,6 +3,8 @@ using ClassLibrary.EntityObjects;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Text;
+using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -35,48 +37,63 @@ namespace MultichoiceReconPortal
         // Head Accounts assigns partners to accountants and to themselves.
         private void BindUsers()
         {
-            ddlUser.Items.Clear();
-            ddlUser.Items.Add(new ListItem("-- select a user --", ""));
+            DataTable dt = new DataTable();
+            dt.Columns.Add("UserId", typeof(int));
+            dt.Columns.Add("FullName");
+            dt.Columns.Add("RoleName");
+            dt.Columns.Add("Partners");
+
             foreach (PortalUser u in bll.GetUsers())
             {
-                if (u.IsAccountant || u.IsHeadAccounts)
-                {
-                    ddlUser.Items.Add(new ListItem(u.FullName + " (" + u.RoleName + ")", u.UserId.ToString()));
-                }
+                if (!(u.IsAccountant || u.IsHeadAccounts)) continue;
+
+                List<string> names = new List<string>();
+                foreach (DataRow pr in bll.GetUserPartners(u.UserId).Rows) names.Add(pr["PartnerName"].ToString());
+                dt.Rows.Add(u.UserId, u.FullName, u.RoleName, string.Join(", ", names));
             }
+
+            gvUsers.DataSource = dt;
+            gvUsers.DataBind();
         }
 
-        protected void ddlUser_SelectedIndexChanged(object sender, EventArgs e)
+        protected string BuildTags(object partners)
         {
-            BindPartners();
-        }
+            string value = partners == null ? "" : partners.ToString();
+            if (string.IsNullOrWhiteSpace(value)) return "<span class='text-muted'>None</span>";
 
-        private void BindPartners()
-        {
-            int userId;
-            if (!int.TryParse(ddlUser.SelectedValue, out userId))
+            StringBuilder sb = new StringBuilder();
+            foreach (string name in value.Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries))
             {
-                pnlPartners.Visible = false;
-                return;
+                sb.Append("<span class='badge'>").Append(HttpUtility.HtmlEncode(name)).Append("</span>");
             }
+            return sb.ToString();
+        }
+
+        protected void gvUsers_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+            if (e.CommandName != "Assign") return;
+
+            int index;
+            if (!int.TryParse(Convert.ToString(e.CommandArgument), out index)) return;
+
+            DataKey key = gvUsers.DataKeys[index];
+            int userId = Convert.ToInt32(key.Values["UserId"]);
+            string fullName = Convert.ToString(key.Values["FullName"]);
+
+            hfUserId.Value = userId.ToString();
+            litAssignUser.Text = HttpUtility.HtmlEncode(fullName);
 
             cblPartners.DataSource = bll.GetPartners();
             cblPartners.DataBind();
 
             HashSet<string> assigned = new HashSet<string>();
-            foreach (DataRow dr in bll.GetUserPartners(userId).Rows)
-            {
-                assigned.Add(dr["PartnerId"].ToString());
-            }
-            foreach (ListItem item in cblPartners.Items)
-            {
-                item.Selected = assigned.Contains(item.Value);
-            }
+            foreach (DataRow pr in bll.GetUserPartners(userId).Rows) assigned.Add(pr["PartnerId"].ToString());
+            foreach (ListItem item in cblPartners.Items) item.Selected = assigned.Contains(item.Value);
 
-            pnlPartners.Visible = true;
+            OpenModal();
         }
 
-        protected void btnSave_Click(object sender, EventArgs e)
+        protected void btnSaveAssign_Click(object sender, EventArgs e)
         {
             PortalUser admin = Session["User"] as PortalUser;
             if (admin == null || !admin.CanAssignPartners)
@@ -86,9 +103,9 @@ namespace MultichoiceReconPortal
             }
 
             int userId;
-            if (!int.TryParse(ddlUser.SelectedValue, out userId))
+            if (!int.TryParse(hfUserId.Value, out userId))
             {
-                ShowMessage("Please select a user first.", "alert-danger");
+                ShowMessage("We could not identify the user. Please try again.", "alert-danger");
                 return;
             }
 
@@ -108,6 +125,17 @@ namespace MultichoiceReconPortal
             {
                 ShowMessage("We could not save the assignments right now. Please try again.", "alert-danger");
             }
+
+            // Rebind the table; the modal is NOT reopened, so it closes cleanly.
+            BindUsers();
+        }
+
+        private void OpenModal()
+        {
+            // RegisterStartupScript renders only for this response, so the modal does
+            // not reopen on the next postback.
+            ClientScript.RegisterStartupScript(GetType(), "openAssign",
+                "var m=new bootstrap.Modal(document.getElementById('assignModal'));m.show();", true);
         }
 
         private void ShowMessage(string message, string cssClass)

@@ -89,6 +89,10 @@
                 <asp:Button ID="btnLogin" runat="server" CssClass="btn btn-primary w-100 login-btn"
                     Text="Sign In" OnClick="btnLogin_Click" />
 
+                <p style="text-align:center; margin:18px 0 0;">
+                    <a href="<%: ResolveUrl("~/ForgotPassword.aspx") %>" style="color:var(--mc-blue); text-decoration:none; font-weight:600; font-size:.92rem;">Forgot password?</a>
+                </p>
+
                 <p class="login-foot">MultiChoice Reconciliation &copy; <%: DateTime.Now.Year %></p>
             </asp:Panel>
         </div>
